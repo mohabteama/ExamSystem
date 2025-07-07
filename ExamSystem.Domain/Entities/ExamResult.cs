@@ -1,0 +1,24 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ExamSystem.Domain.Entities
+{
+    public class ExamResult
+    {
+        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public string ExamId { get; set; }
+        public string StudentId { get; set; }
+        public int Score { get; set; }
+        public int TotalQuestions { get; set; }
+        public int PassingScore { get; set; }
+        public bool IsPassed { get; set; }
+        public DateTime EvaluatedAt { get; set; } = DateTime.UtcNow;
+
+        // Navigation properties
+        public Exam Exam { get; set; }
+        public Student Student { get; set; }
+    }
+}
