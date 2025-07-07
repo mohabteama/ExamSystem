@@ -12,7 +12,6 @@ namespace ExamSystem.Domain.Entities
         public string ExamId { get; set; }
         public string QuestionId { get; set; }
         public string SelectedOptionId { get; set; }
-        public DateTime AnsweredAt { get; set; } = DateTime.UtcNow;
 
         // Navigation properties
         public Exam Exam { get; set; }

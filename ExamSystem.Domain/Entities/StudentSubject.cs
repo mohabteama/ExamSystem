@@ -11,7 +11,6 @@ namespace ExamSystem.Domain.Entities
         public string Id { get; set; } = Guid.NewGuid().ToString();
         public string StudentId { get; set; }
         public string SubjectId { get; set; }
-        public DateTime EnrollmentDate { get; set; } = DateTime.UtcNow;
 
         // Navigation properties
         public Student Student { get; set; }

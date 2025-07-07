@@ -1,7 +1,5 @@
 ﻿using ExamSystem.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using System.Reflection;
 
 namespace ExamSystem.Infrastructure.Data
 {
@@ -81,19 +79,8 @@ namespace ExamSystem.Infrastructure.Data
                     .HasMaxLength(255)
                     .IsRequired();
 
-                entity.Property(e => e.FirstName)
-                    .HasMaxLength(100)
-                    .IsRequired();
-
-                entity.Property(e => e.LastName)
-                    .HasMaxLength(100)
-                    .IsRequired();
-
                 entity.Property(e => e.IsActive)
                     .HasDefaultValue(true);
-
-                entity.Property(e => e.CreatedAt)
-                    .IsRequired();
 
                 // Indexes
                 entity.HasIndex(e => e.Email)
@@ -130,20 +117,6 @@ namespace ExamSystem.Infrastructure.Data
                     .HasMaxLength(255)
                     .IsRequired();
 
-                entity.Property(e => e.FirstName)
-                    .HasMaxLength(100)
-                    .IsRequired();
-
-                entity.Property(e => e.LastName)
-                    .HasMaxLength(100)
-                    .IsRequired();
-
-                entity.Property(e => e.AdminLevel)
-                    .HasDefaultValue(1);
-
-                entity.Property(e => e.CreatedAt)
-                    .IsRequired();
-
                 // Indexes
                 entity.HasIndex(e => e.Email)
                     .IsUnique();
@@ -169,9 +142,6 @@ namespace ExamSystem.Infrastructure.Data
                     .HasMaxLength(100)
                     .IsRequired();
 
-                entity.Property(e => e.Description)
-                    .HasMaxLength(500);
-
                 entity.Property(e => e.ExamDuration)
                     .IsRequired();
 
@@ -192,9 +162,6 @@ namespace ExamSystem.Infrastructure.Data
 
                 entity.Property(e => e.CreatedById)
                     .HasMaxLength(50)
-                    .IsRequired();
-
-                entity.Property(e => e.CreatedAt)
                     .IsRequired();
 
                 entity.Property(e => e.IsActive)
@@ -241,9 +208,6 @@ namespace ExamSystem.Infrastructure.Data
                     .HasMaxLength(50)
                     .IsRequired();
 
-                entity.Property(e => e.CreatedAt)
-                    .IsRequired();
-
                 entity.Property(e => e.IsActive)
                     .HasDefaultValue(true);
 
@@ -263,10 +227,6 @@ namespace ExamSystem.Infrastructure.Data
                 entity.HasIndex(e => e.Difficulty);
                 entity.HasIndex(e => e.IsActive);
                 entity.HasIndex(e => e.CreatedById);
-
-                // Check constraint
-                entity.HasCheckConstraint("CK_Questions_Difficulty",
-                    "Difficulty IN ('Easy', 'Normal', 'Hard')");
             });
         }
 
@@ -328,9 +288,6 @@ namespace ExamSystem.Infrastructure.Data
                     .HasMaxLength(50)
                     .IsRequired();
 
-                entity.Property(e => e.EnrollmentDate)
-                    .IsRequired();
-
                 // Relationships
                 entity.HasOne(e => e.Student)
                     .WithMany(e => e.StudentSubjects)
@@ -380,9 +337,6 @@ namespace ExamSystem.Infrastructure.Data
                     .HasMaxLength(20)
                     .IsRequired();
 
-                entity.Property(e => e.CreatedAt)
-                    .IsRequired();
-
                 // Relationships
                 entity.HasOne(e => e.Student)
                     .WithMany(e => e.Exams)
@@ -399,10 +353,6 @@ namespace ExamSystem.Infrastructure.Data
                 entity.HasIndex(e => e.SubjectId);
                 entity.HasIndex(e => e.Status);
                 entity.HasIndex(e => e.StartTime);
-
-                // Check constraint
-                entity.HasCheckConstraint("CK_Exams_Status",
-                    "Status IN ('InProgress', 'Submitted', 'TimedOut', 'Evaluated')");
             });
         }
 
@@ -424,9 +374,6 @@ namespace ExamSystem.Infrastructure.Data
 
                 entity.Property(e => e.QuestionId)
                     .HasMaxLength(50)
-                    .IsRequired();
-
-                entity.Property(e => e.Order)
                     .IsRequired();
 
                 // Relationships
@@ -470,9 +417,6 @@ namespace ExamSystem.Infrastructure.Data
 
                 entity.Property(e => e.SelectedOptionId)
                     .HasMaxLength(50)
-                    .IsRequired();
-
-                entity.Property(e => e.AnsweredAt)
                     .IsRequired();
 
                 // Relationships
@@ -523,16 +467,7 @@ namespace ExamSystem.Infrastructure.Data
                 entity.Property(e => e.Score)
                     .IsRequired();
 
-                entity.Property(e => e.TotalQuestions)
-                    .IsRequired();
-
-                entity.Property(e => e.PassingScore)
-                    .IsRequired();
-
                 entity.Property(e => e.IsPassed)
-                    .IsRequired();
-
-                entity.Property(e => e.EvaluatedAt)
                     .IsRequired();
 
                 // Relationships
@@ -550,7 +485,6 @@ namespace ExamSystem.Infrastructure.Data
                 entity.HasIndex(e => e.ExamId)
                     .IsUnique();
                 entity.HasIndex(e => e.StudentId);
-                entity.HasIndex(e => e.EvaluatedAt);
                 entity.HasIndex(e => e.IsPassed);
             });
         }

@@ -13,7 +13,6 @@ namespace ExamSystem.Domain.Entities
         public string Text { get; set; }
         public string Difficulty { get; set; } // "Easy", "Normal", "Hard"
         public string CreatedById { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public bool IsActive { get; set; } = true;
 
         // Navigation properties

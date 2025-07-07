@@ -10,7 +10,6 @@ namespace ExamSystem.Domain.Entities
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
         public string Name { get; set; }
-        public string Description { get; set; }
         public int ExamDuration { get; set; }
         public int TotalQuestionsCount { get; set; }
         public int EasyQuestionsCount { get; set; }
@@ -18,7 +17,6 @@ namespace ExamSystem.Domain.Entities
         public int HardQuestionsCount { get; set; }
         public int PassingScore { get; set; }
         public string CreatedById { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public bool IsActive { get; set; } = true;
 
         // Navigation properties

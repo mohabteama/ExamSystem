@@ -12,10 +12,7 @@ namespace ExamSystem.Domain.Entities
         public string ExamId { get; set; }
         public string StudentId { get; set; }
         public int Score { get; set; }
-        public int TotalQuestions { get; set; }
-        public int PassingScore { get; set; }
         public bool IsPassed { get; set; }
-        public DateTime EvaluatedAt { get; set; } = DateTime.UtcNow;
 
         // Navigation properties
         public Exam Exam { get; set; }
