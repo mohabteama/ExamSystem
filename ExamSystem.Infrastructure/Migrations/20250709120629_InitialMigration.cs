@@ -15,15 +15,10 @@ namespace ExamSystem.Infrastructure.Migrations
                 name: "Admins",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    AdminLevel = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastLogin = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -34,15 +29,10 @@ namespace ExamSystem.Infrastructure.Migrations
                 name: "Students",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastLogin = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -53,25 +43,16 @@ namespace ExamSystem.Infrastructure.Migrations
                 name: "Subjects",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    ExamDuration = table.Column<int>(type: "int", nullable: false),
-                    TotalQuestionsCount = table.Column<int>(type: "int", nullable: false),
-                    EasyQuestionsCount = table.Column<int>(type: "int", nullable: false),
-                    NormalQuestionsCount = table.Column<int>(type: "int", nullable: false),
-                    HardQuestionsCount = table.Column<int>(type: "int", nullable: false),
-                    PassingScore = table.Column<int>(type: "int", nullable: false),
-                    CreatedById = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AdminId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Subjects", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Subjects_Admins_CreatedById",
-                        column: x => x.CreatedById,
+                        name: "FK_Subjects_Admins_AdminId",
+                        column: x => x.AdminId,
                         principalTable: "Admins",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -81,25 +62,24 @@ namespace ExamSystem.Infrastructure.Migrations
                 name: "Exams",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    StudentId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    SubjectId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    StudentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    SubjectId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Difficulty = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    EndTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Duration = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Exams", x => x.Id);
-                    table.CheckConstraint("CK_Exams_Status", "Status IN ('InProgress', 'Submitted', 'TimedOut', 'Evaluated')");
                     table.ForeignKey(
                         name: "FK_Exams_Students_StudentId",
                         column: x => x.StudentId,
                         principalTable: "Students",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Exams_Subjects_SubjectId",
                         column: x => x.SubjectId,
@@ -112,21 +92,20 @@ namespace ExamSystem.Infrastructure.Migrations
                 name: "Questions",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    SubjectId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Text = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
-                    Difficulty = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    CreatedById = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    SubjectId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    question = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TotalQuestionsCount = table.Column<int>(type: "int", nullable: false),
+                    AdminId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    Difficulty = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Questions", x => x.Id);
-                    table.CheckConstraint("CK_Questions_Difficulty", "Difficulty IN ('Easy', 'Normal', 'Hard')");
                     table.ForeignKey(
-                        name: "FK_Questions_Admins_CreatedById",
-                        column: x => x.CreatedById,
+                        name: "FK_Questions_Admins_AdminId",
+                        column: x => x.AdminId,
                         principalTable: "Admins",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -142,10 +121,9 @@ namespace ExamSystem.Infrastructure.Migrations
                 name: "StudentSubjects",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    StudentId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    SubjectId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    EnrollmentDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    StudentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    SubjectId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -161,21 +139,18 @@ namespace ExamSystem.Infrastructure.Migrations
                         column: x => x.SubjectId,
                         principalTable: "Subjects",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
                 name: "ExamResults",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    ExamId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    StudentId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ExamId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    StudentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Score = table.Column<int>(type: "int", nullable: false),
-                    TotalQuestions = table.Column<int>(type: "int", nullable: false),
-                    PassingScore = table.Column<int>(type: "int", nullable: false),
-                    IsPassed = table.Column<bool>(type: "bit", nullable: false),
-                    EvaluatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    IsPassed = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -198,10 +173,9 @@ namespace ExamSystem.Infrastructure.Migrations
                 name: "ExamQuestions",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    ExamId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    QuestionId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Order = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ExamId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    QuestionId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -224,11 +198,10 @@ namespace ExamSystem.Infrastructure.Migrations
                 name: "Options",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    QuestionId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Text = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    IsCorrect = table.Column<bool>(type: "bit", nullable: false),
-                    Order = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    QuestionId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Answer = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsCorrect = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -245,11 +218,11 @@ namespace ExamSystem.Infrastructure.Migrations
                 name: "StudentAnswers",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    ExamId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    QuestionId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    SelectedOptionId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    AnsweredAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ExamId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    StudentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    QuestionId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    SelectedOptionId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -272,19 +245,13 @@ namespace ExamSystem.Infrastructure.Migrations
                         principalTable: "Questions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_StudentAnswers_Students_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Students",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Admins_Email",
-                table: "Admins",
-                column: "Email",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Admins_Username",
-                table: "Admins",
-                column: "Username",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ExamQuestions_ExamId",
@@ -292,20 +259,9 @@ namespace ExamSystem.Infrastructure.Migrations
                 column: "ExamId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ExamQuestions_ExamId_QuestionId",
-                table: "ExamQuestions",
-                columns: new[] { "ExamId", "QuestionId" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ExamQuestions_QuestionId",
                 table: "ExamQuestions",
                 column: "QuestionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ExamResults_EvaluatedAt",
-                table: "ExamResults",
-                column: "EvaluatedAt");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ExamResults_ExamId",
@@ -314,24 +270,9 @@ namespace ExamSystem.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ExamResults_IsPassed",
-                table: "ExamResults",
-                column: "IsPassed");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ExamResults_StudentId",
                 table: "ExamResults",
                 column: "StudentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Exams_StartTime",
-                table: "Exams",
-                column: "StartTime");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Exams_Status",
-                table: "Exams",
-                column: "Status");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Exams_StudentId",
@@ -344,29 +285,14 @@ namespace ExamSystem.Infrastructure.Migrations
                 column: "SubjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Options_IsCorrect",
-                table: "Options",
-                column: "IsCorrect");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Options_QuestionId",
                 table: "Options",
                 column: "QuestionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Questions_CreatedById",
+                name: "IX_Questions_AdminId",
                 table: "Questions",
-                column: "CreatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Questions_Difficulty",
-                table: "Questions",
-                column: "Difficulty");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Questions_IsActive",
-                table: "Questions",
-                column: "IsActive");
+                column: "AdminId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Questions_SubjectId",
@@ -379,12 +305,6 @@ namespace ExamSystem.Infrastructure.Migrations
                 column: "ExamId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StudentAnswers_ExamId_QuestionId",
-                table: "StudentAnswers",
-                columns: new[] { "ExamId", "QuestionId" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_StudentAnswers_QuestionId",
                 table: "StudentAnswers",
                 column: "QuestionId");
@@ -395,21 +315,9 @@ namespace ExamSystem.Infrastructure.Migrations
                 column: "SelectedOptionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Students_Email",
-                table: "Students",
-                column: "Email",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Students_IsActive",
-                table: "Students",
-                column: "IsActive");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Students_Username",
-                table: "Students",
-                column: "Username",
-                unique: true);
+                name: "IX_StudentAnswers_StudentId",
+                table: "StudentAnswers",
+                column: "StudentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StudentSubjects_StudentId",
@@ -417,30 +325,14 @@ namespace ExamSystem.Infrastructure.Migrations
                 column: "StudentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StudentSubjects_StudentId_SubjectId",
-                table: "StudentSubjects",
-                columns: new[] { "StudentId", "SubjectId" },
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_StudentSubjects_SubjectId",
                 table: "StudentSubjects",
                 column: "SubjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Subjects_CreatedById",
+                name: "IX_Subjects_AdminId",
                 table: "Subjects",
-                column: "CreatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Subjects_IsActive",
-                table: "Subjects",
-                column: "IsActive");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Subjects_Name",
-                table: "Subjects",
-                column: "Name");
+                column: "AdminId");
         }
 
         /// <inheritdoc />

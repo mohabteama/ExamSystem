@@ -4,15 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExamSystem.Domain.Entities
+namespace ExamSystem.Application.DTO
 {
-    public class ExamQuestion
+    public class ExamQuestionDto
     {
         public string Id { get; set; }
         public string ExamId { get; set; }
         public string QuestionId { get; set; }
-
-        public Exam Exam { get; set; }
-        public Question Question { get; set; }
     }
 }

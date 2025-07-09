@@ -4,19 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExamSystem.Domain.Entities
+namespace ExamSystem.Application.DTO
 {
-    public class StudentAnswer
+    public class StudentAnswerDto
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
         public string ExamId { get; set; }
         public string StudentId { get; set; }
         public string QuestionId { get; set; }
         public string SelectedOptionId { get; set; }
-
-        public Exam Exam { get; set; }
-        public Question Question { get; set; }
-        public Option SelectedOption { get; set; }
-        public Student Student { get; set; }
     }
 }

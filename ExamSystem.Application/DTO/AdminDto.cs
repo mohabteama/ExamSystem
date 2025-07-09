@@ -1,13 +1,16 @@
-﻿namespace ExamSystem.Domain.Entities
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ExamSystem.Application.DTO
 {
-    public class Admin
+    public class AdminDto
     {
         public string Id { get; set; }
         public string Email { get; set; }
         public string Username { get; set; }
         public string PasswordHash { get; set; }
-
-        public ICollection<Subject> Subjects { get; set; }
-        public ICollection<Question> Questions { get; set; }
     }
 }

@@ -4,16 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExamSystem.Domain.Entities
+namespace ExamSystem.Application.DTO
 {
-    public class Option
+    public class OptionDto
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
         public string QuestionId { get; set; }
         public string Answer { get; set; }
         public bool IsCorrect { get; set; }
-
-        public Question Question { get; set; }
-        public ICollection<StudentAnswer> StudentAnswers { get; set; }
     }
 }

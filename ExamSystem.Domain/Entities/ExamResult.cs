@@ -14,7 +14,6 @@ namespace ExamSystem.Domain.Entities
         public int Score { get; set; }
         public bool IsPassed { get; set; }
 
-        // Navigation properties
         public Exam Exam { get; set; }
         public Student Student { get; set; }
     }

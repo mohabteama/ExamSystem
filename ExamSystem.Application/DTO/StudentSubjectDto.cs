@@ -4,15 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ExamSystem.Domain.Entities
+namespace ExamSystem.Application.DTO
 {
-    public class StudentSubject
+    public class StudentSubjectDto
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
         public string StudentId { get; set; }
         public string SubjectId { get; set; }
-
-        public Student Student { get; set; }
-        public Subject Subject { get; set; }
     }
 }
