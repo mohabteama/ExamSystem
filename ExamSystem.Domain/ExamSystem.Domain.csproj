@@ -21,10 +21,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Interfaces\" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
 	</ItemGroup>
 
 </Project>

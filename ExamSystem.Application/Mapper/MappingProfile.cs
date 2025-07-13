@@ -8,7 +8,6 @@ namespace ExamSystem.Application.Mapper
     {
         public MappingProfile()
         {
-            CreateMap<Admin, AdminDto>().ReverseMap();
             CreateMap<Exam, ExamDto>().ReverseMap();
             CreateMap<ExamQuestion, ExamQuestionDto>().ReverseMap();
             CreateMap<ExamResult, ExamResultDto>().ReverseMap();

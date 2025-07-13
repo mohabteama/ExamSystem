@@ -4,6 +4,7 @@ using ExamSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExamSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250713133935_AddIdentitySchema")]
+    partial class AddIdentitySchema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,28 @@ namespace ExamSystem.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("ExamSystem.Domain.Entities.Admin", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Admins");
+                });
 
             modelBuilder.Entity("ExamSystem.Domain.Entities.Exam", b =>
                 {
@@ -142,7 +167,7 @@ namespace ExamSystem.Infrastructure.Migrations
 
                     b.Property<string>("AdminId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Difficulty")
                         .HasColumnType("int");
@@ -162,6 +187,8 @@ namespace ExamSystem.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AdminId");
 
                     b.HasIndex("SubjectId");
 
@@ -253,13 +280,15 @@ namespace ExamSystem.Infrastructure.Migrations
 
                     b.Property<string>("AdminId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AdminId");
 
                     b.ToTable("Subjects");
                 });
@@ -532,11 +561,19 @@ namespace ExamSystem.Infrastructure.Migrations
 
             modelBuilder.Entity("ExamSystem.Domain.Entities.Question", b =>
                 {
+                    b.HasOne("ExamSystem.Domain.Entities.Admin", "CreatedByAdmin")
+                        .WithMany("Questions")
+                        .HasForeignKey("AdminId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("ExamSystem.Domain.Entities.Subject", "Subject")
                         .WithMany("Questions")
                         .HasForeignKey("SubjectId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("CreatedByAdmin");
 
                     b.Navigation("Subject");
                 });
@@ -595,6 +632,17 @@ namespace ExamSystem.Infrastructure.Migrations
                     b.Navigation("Subject");
                 });
 
+            modelBuilder.Entity("ExamSystem.Domain.Entities.Subject", b =>
+                {
+                    b.HasOne("ExamSystem.Domain.Entities.Admin", "CreatedByAdmin")
+                        .WithMany("Subjects")
+                        .HasForeignKey("AdminId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CreatedByAdmin");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -644,6 +692,13 @@ namespace ExamSystem.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ExamSystem.Domain.Entities.Admin", b =>
+                {
+                    b.Navigation("Questions");
+
+                    b.Navigation("Subjects");
                 });
 
             modelBuilder.Entity("ExamSystem.Domain.Entities.Exam", b =>

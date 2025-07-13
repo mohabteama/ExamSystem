@@ -19,7 +19,7 @@ namespace ExamSystem.Domain.Entities
         public DifficultyLevel Difficulty { get; set; }
 
         public Subject Subject { get; set; }
-        public Admin CreatedByAdmin { get; set; }
+        
         public ICollection<Option> Options { get; set; }
         public ICollection<ExamQuestion> ExamQuestions { get; set; }
         public ICollection<StudentAnswer> StudentAnswers { get; set; }

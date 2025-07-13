@@ -1,16 +1,17 @@
 ﻿using ExamSystem.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ExamSystem.Infrastructure.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
         }
 
-        public DbSet<Admin> Admins { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<Question> Questions { get; set; }
@@ -24,22 +25,7 @@ namespace ExamSystem.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<Admin>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-
-                entity.HasMany(a => a.Subjects)
-                      .WithOne(s => s.CreatedByAdmin)
-                      .HasForeignKey(s => s.AdminId)
-                      .OnDelete(DeleteBehavior.Restrict);
-
-                entity.HasMany(a => a.Questions)
-                      .WithOne(q => q.CreatedByAdmin)
-                      .HasForeignKey(q => q.AdminId)
-                      .OnDelete(DeleteBehavior.Restrict);
-            });
-
+                    
             modelBuilder.Entity<Student>(entity =>
             {
                 entity.HasKey(e => e.Id);
