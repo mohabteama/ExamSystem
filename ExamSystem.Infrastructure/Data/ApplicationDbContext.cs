@@ -49,6 +49,7 @@ namespace ExamSystem.Infrastructure.Data
             modelBuilder.Entity<Subject>(entity =>
             {
                 entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
 
                 entity.HasMany(s => s.Questions)
                       .WithOne(q => q.Subject)

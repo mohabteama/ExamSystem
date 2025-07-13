@@ -1,5 +1,10 @@
 using ExamSystem.API.Configurations;
+using ExamSystem.Application.Mapper;
+using ExamSystem.Application.Services.IService;
+using ExamSystem.Application.Services.Service;
+using ExamSystem.Domain.Interfaces;
 using ExamSystem.Infrastructure.Data;
+using ExamSystem.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +15,12 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
+builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
+builder.Services.AddScoped<IExamRepository, ExamRepository>();
+builder.Services.AddScoped<IOptionRepository, OptionRepository>();
+builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
+builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+builder.Services.AddScoped<ISubjectService, SubjectService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -44,7 +55,11 @@ builder.Services.AddAuthorization(options =>
 });
 builder.Services.AddOpenApi();
     builder.Services.AddSwaggerGen();
-    builder.Services.AddAutoMapper(typeof(ExamSystem.Application.Mapper.MappingProfile));
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddAutoMapper(
+    typeof(Program).Assembly,
+    typeof(MappingProfile).Assembly);
+
     builder.Services.AddDbContext<ApplicationDbContext>();
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
