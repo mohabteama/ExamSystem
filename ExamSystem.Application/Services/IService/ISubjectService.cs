@@ -11,6 +11,7 @@ namespace ExamSystem.Application.Services.IService
 {
     public interface ISubjectService
     {
+        List<SubjectDto> GetAllSubjects();
         bool CreateSubject(SubjectDto SubjectDto);
     }
 }

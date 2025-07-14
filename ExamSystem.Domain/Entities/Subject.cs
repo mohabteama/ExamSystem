@@ -8,7 +8,7 @@ namespace ExamSystem.Domain.Entities
 {
     public class Subject
     {
-            public string Id { get; set; }
+            public int Id { get; set; }
             public string Name { get; set; }
             
         public ICollection<Question> Questions { get; set; }

@@ -3,11 +3,7 @@ using ExamSystem.Application.DTO;
 using ExamSystem.Application.Services.IService;
 using ExamSystem.Domain.Entities;
 using ExamSystem.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ExamSystem.Application.Services.Service
 {
@@ -20,6 +16,10 @@ namespace ExamSystem.Application.Services.Service
         {
             _subjectRepository = subjectRepository;
             _mapper = mapper;
+        }
+
+        public List<SubjectDto> GetAllSubjects() {
+            return _mapper.Map<List<SubjectDto>>(_subjectRepository.GetAll());
         }
 
         public bool CreateSubject(SubjectDto SubjectDto)

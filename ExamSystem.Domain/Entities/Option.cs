@@ -8,8 +8,8 @@ namespace ExamSystem.Domain.Entities
 {
     public class Option
     {
-        public string Id { get; set; } = Guid.NewGuid().ToString();
-        public string QuestionId { get; set; }
+        public int Id { get; set; }
+        public int QuestionId { get; set; }
         public string Answer { get; set; }
         public bool IsCorrect { get; set; }
 

@@ -8,11 +8,11 @@ namespace ExamSystem.Domain.Entities
 {
     public class StudentAnswer
     {
-        public string Id { get; set; } = Guid.NewGuid().ToString();
-        public string ExamId { get; set; }
-        public string StudentId { get; set; }
-        public string QuestionId { get; set; }
-        public string SelectedOptionId { get; set; }
+        public int Id { get; set; }
+        public int ExamId { get; set; }
+        public int StudentId { get; set; }
+        public int QuestionId { get; set; }
+        public int SelectedOptionId { get; set; }
 
         public Exam Exam { get; set; }
         public Question Question { get; set; }

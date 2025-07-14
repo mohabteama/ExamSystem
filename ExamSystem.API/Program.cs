@@ -21,6 +21,7 @@ builder.Services.AddScoped<IOptionRepository, OptionRepository>();
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<ISubjectService, SubjectService>();
+builder.Services.AddScoped<IQuestionService, QuestionService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

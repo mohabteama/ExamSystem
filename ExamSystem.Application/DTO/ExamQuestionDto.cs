@@ -8,8 +8,8 @@ namespace ExamSystem.Application.DTO
 {
     public class ExamQuestionDto
     {
-        public string Id { get; set; }
-        public string ExamId { get; set; }
-        public string QuestionId { get; set; }
+        public int Id { get; set; }
+        public int ExamId { get; set; }
+        public int QuestionId { get; set; }
     }
 }

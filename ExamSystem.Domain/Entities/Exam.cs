@@ -3,10 +3,11 @@
     public class Exam
     {
         
-        public string Id { get; set; } = Guid.NewGuid().ToString();
-        public string StudentId { get; set; }
-        public string SubjectId { get; set; }
+        public int Id { get; set; }
+        public int StudentId { get; set; }
+        public int SubjectId { get; set; }
         public string Difficulty { get; set; }
+        public int TotalQuestionsCount { get; set; }
         public DateTime StartTime { get; set; } = DateTime.UtcNow;
         public DateTime EndTime { get; set; }
         public int Duration { get; set; }

@@ -8,9 +8,9 @@ namespace ExamSystem.Domain.Entities
 {
     public class ExamQuestion
     {
-        public string Id { get; set; }
-        public string ExamId { get; set; }
-        public string QuestionId { get; set; }
+        public int Id { get; set; }
+        public int ExamId { get; set; }
+        public int QuestionId { get; set; }
 
         public Exam Exam { get; set; }
         public Question Question { get; set; }

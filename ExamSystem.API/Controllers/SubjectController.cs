@@ -26,5 +26,14 @@ namespace ExamSystem.API.Controllers
 
             return StatusCode(201, "Successfully created");
         }
+
+        [HttpGet]
+        public IActionResult GetAllSubjects() {
+            var subjects = _subjectService.GetAllSubjects();
+            if (subjects == null || subjects.Count == 0)
+                return NotFound("No subjects found.");
+    
+            return Ok(subjects);
+        }
     }
 }
