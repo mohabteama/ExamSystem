@@ -1,6 +1,5 @@
 ﻿using ExamSystem.Application.DTO;
 using ExamSystem.Application.Services.IService;
-using ExamSystem.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExamSystem.API.Controllers
@@ -34,6 +33,17 @@ namespace ExamSystem.API.Controllers
                 return NotFound("No subjects found.");
     
             return Ok(subjects);
+        }
+        [HttpPut]
+        public IActionResult UpdateSubject([FromBody] SubjectDto subjectDto, int SubjectId) {
+            if(subjectDto == null)
+                return BadRequest();
+
+            var result = _subjectService.UpdateSubject(subjectDto, SubjectId);
+            if (!result) 
+                return NotFound();
+
+            return Ok("Successfully updated");
         }
     }
 }

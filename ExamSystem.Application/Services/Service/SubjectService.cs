@@ -9,7 +9,7 @@ namespace ExamSystem.Application.Services.Service
 {
     public class SubjectService : ISubjectService
     {
-        private readonly ISubjectRepository _subjectRepository;    
+        private readonly ISubjectRepository _subjectRepository;
         private readonly IMapper _mapper;
 
         public SubjectService(IMapper mapper, ISubjectRepository subjectRepository)
@@ -18,7 +18,8 @@ namespace ExamSystem.Application.Services.Service
             _mapper = mapper;
         }
 
-        public List<SubjectDto> GetAllSubjects() {
+        public List<SubjectDto> GetAllSubjects()
+        {
             return _mapper.Map<List<SubjectDto>>(_subjectRepository.GetAll());
         }
 
@@ -30,7 +31,14 @@ namespace ExamSystem.Application.Services.Service
                 return false;
             var subject = _mapper.Map<Subject>(SubjectDto);
             return _subjectRepository.Create(subject);
-
+        }
+        public bool UpdateSubject(SubjectDto SubjectDto, int SubjectId)
+        {
+            var exist = _subjectRepository.GetById(SubjectId);
+            if (exist == null)
+                return false;
+            var subject = _mapper.Map<Subject>(SubjectDto);
+            return _subjectRepository.Update(subject);
         }
     }
 }

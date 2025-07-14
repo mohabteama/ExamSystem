@@ -13,5 +13,6 @@ namespace ExamSystem.Application.Services.IService
     {
         List<SubjectDto> GetAllSubjects();
         bool CreateSubject(SubjectDto SubjectDto);
+        bool UpdateSubject(SubjectDto SubjectDto, int SubjectId);
     }
 }
