@@ -21,5 +21,13 @@ namespace ExamSystem.API.Controllers
             if (!result) return StatusCode(422, "Student subject already exists or error occurred");
             return StatusCode(201, "Successfully created");
         }
+        [HttpGet]
+        public IActionResult GetAllStudentSubjects()
+        {
+            var studentSubjects = _studentSubjectService.GetAllStudentSubject();
+            if (studentSubjects == null || studentSubjects.Count == 0)
+                return NotFound("No student subjects found.");
+            return Ok(studentSubjects);
+        }
     }
 }

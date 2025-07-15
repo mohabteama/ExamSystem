@@ -17,6 +17,10 @@ namespace ExamSystem.Infrastructure.Repositories
         {
             return _dbSet.ToList();
         }
+        public IQueryable<T> Get()
+        {
+            return _dbSet;
+        }
 
         public T GetById(int id)
         {
@@ -43,6 +47,7 @@ namespace ExamSystem.Infrastructure.Repositories
         {
             _dbSet.Update(entity);
             return Save();
+
         }
 
         public bool Delete(T entity)

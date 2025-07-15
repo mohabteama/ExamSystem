@@ -180,6 +180,9 @@ namespace ExamSystem.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -228,21 +231,13 @@ namespace ExamSystem.Infrastructure.Migrations
 
             modelBuilder.Entity("ExamSystem.Domain.Entities.StudentSubject", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<int>("StudentId")
                         .HasColumnType("int");
 
                     b.Property<int>("SubjectId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("StudentId");
+                    b.HasKey("StudentId", "SubjectId");
 
                     b.HasIndex("SubjectId");
 

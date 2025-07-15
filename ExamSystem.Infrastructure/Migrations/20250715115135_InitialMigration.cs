@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ExamSystem.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class initialmigration : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -58,7 +58,8 @@ namespace ExamSystem.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -241,14 +242,12 @@ namespace ExamSystem.Infrastructure.Migrations
                 name: "StudentSubjects",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
                     StudentId = table.Column<int>(type: "int", nullable: false),
                     SubjectId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StudentSubjects", x => x.Id);
+                    table.PrimaryKey("PK_StudentSubjects", x => new { x.StudentId, x.SubjectId });
                     table.ForeignKey(
                         name: "FK_StudentSubjects_Students_StudentId",
                         column: x => x.StudentId,
@@ -476,11 +475,6 @@ namespace ExamSystem.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_StudentAnswers_StudentId",
                 table: "StudentAnswers",
-                column: "StudentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_StudentSubjects_StudentId",
-                table: "StudentSubjects",
                 column: "StudentId");
 
             migrationBuilder.CreateIndex(

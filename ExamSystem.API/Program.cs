@@ -25,6 +25,9 @@ builder.Services.AddScoped<ISubjectService, SubjectService>();
 builder.Services.AddScoped<IQuestionService, QuestionService>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IStudentSubjectService, StudentSubjectService>();
+builder.Services.AddScoped<IOptionService, OptionService>();
+builder.Services.AddScoped<IExamService, ExamService>();
+
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

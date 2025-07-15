@@ -3,11 +3,6 @@ using ExamSystem.Application.DTO;
 using ExamSystem.Application.Services.IService;
 using ExamSystem.Domain.Entities;
 using ExamSystem.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExamSystem.Application.Services.Service
 {
@@ -32,6 +27,13 @@ namespace ExamSystem.Application.Services.Service
                 return false;
             var student = _mapper.Map<Student>(StudentDto);
             return _StudentRepository.Create(student);
+        }
+
+        public bool UpdateStudentStatus(int StudentId,bool isActive)
+        {
+            var student = _StudentRepository.GetById(StudentId);
+            student.IsActive = isActive;
+            return _StudentRepository.Save();
         }
     }
 }

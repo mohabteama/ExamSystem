@@ -8,7 +8,6 @@ namespace ExamSystem.Application.DTO
 {
     public class StudentSubjectDto
     {
-        public int Id { get; set; }
         public int StudentId { get; set; }
         public int SubjectId { get; set; }
     }

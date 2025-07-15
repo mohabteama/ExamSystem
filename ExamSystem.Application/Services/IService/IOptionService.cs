@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace ExamSystem.Application.Services.IService
 {
-    public interface IStudentSubjectService
+    public interface IOptionService
     {
-        List<StudentSubjectDto> GetAllStudentSubject();
-        bool CreateSubject(StudentSubjectDto StudentSubjectDto);
+        bool CreateOptions(OptionDto optionDto, int questionId);
     }
 }

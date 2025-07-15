@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace ExamSystem.Application.Services.IService
 {
-    public interface IStudentSubjectService
+    public interface IExamService
     {
-        List<StudentSubjectDto> GetAllStudentSubject();
-        bool CreateSubject(StudentSubjectDto StudentSubjectDto);
+        bool CreateExam(ExamDto examDto , int studentId, int subjectId);
+        List<ExamDto> GetExamHistoryByStudentId(int studentId);
     }
 }

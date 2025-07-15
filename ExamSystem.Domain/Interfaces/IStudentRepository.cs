@@ -9,5 +9,6 @@ namespace ExamSystem.Domain.Interfaces
 {
     public interface IStudentRepository : IGenericRepository<Student>
     {
+        //bool UpdateStudentStatus(bool isActive);
     }
 }

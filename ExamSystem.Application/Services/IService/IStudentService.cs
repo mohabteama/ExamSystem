@@ -11,5 +11,6 @@ namespace ExamSystem.Application.Services.IService
     {
         List<StudentDto> GetAllStudents();
         bool CreateStudent(StudentDto StudentDto);
+        bool UpdateStudentStatus(int studentId,bool isActive);
     }
 }

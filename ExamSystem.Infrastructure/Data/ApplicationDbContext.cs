@@ -34,16 +34,15 @@ namespace ExamSystem.Infrastructure.Data
                       .WithOne(e => e.Student)
                       .HasForeignKey(e => e.StudentId)
                       .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasMany(s => s.StudentSubjects)
-                      .WithOne(ss => ss.Student)
-                      .HasForeignKey(ss => ss.StudentId)
-                      .OnDelete(DeleteBehavior.Cascade);
-
+                   
                 entity.HasMany(s => s.StudentAnswers)
                       .WithOne(ss => ss.Student)
                       .HasForeignKey(ss => ss.StudentId)
                       .OnDelete(DeleteBehavior.Restrict);
+                
+                //entity.HasMany(s => s.Subjects)
+                //      .WithMany()
+                //      .UsingEntity(j => j.ToTable("StudentSubjects"));
             });
 
             modelBuilder.Entity<Subject>(entity =>
@@ -61,10 +60,10 @@ namespace ExamSystem.Infrastructure.Data
                       .HasForeignKey(e => e.SubjectId)
                       .OnDelete(DeleteBehavior.Restrict);
 
-                entity.HasMany(s => s.StudentSubjects)
-                      .WithOne(ss => ss.Subject)
-                      .HasForeignKey(ss => ss.SubjectId)
-                      .OnDelete(DeleteBehavior.Cascade);
+                //entity.HasMany(s => s.Students)
+                //      .WithMany()
+                //      .UsingEntity(j => j.ToTable("StudentSubjects"));
+
             });
 
             modelBuilder.Entity<Question>(entity =>
@@ -138,10 +137,8 @@ namespace ExamSystem.Infrastructure.Data
 
             });
 
-            modelBuilder.Entity<StudentSubject>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-            });
+            modelBuilder.Entity<StudentSubject>()
+                   .HasKey(ss => new { ss.StudentId, ss.SubjectId });
         }
     }
 }

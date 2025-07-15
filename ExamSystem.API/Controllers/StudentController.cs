@@ -1,6 +1,5 @@
 ﻿using ExamSystem.Application.DTO;
 using ExamSystem.Application.Services.IService;
-using ExamSystem.Application.Services.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExamSystem.API.Controllers
@@ -32,6 +31,13 @@ namespace ExamSystem.API.Controllers
             if (!result) return StatusCode(422, "Subject already exists or error occurred");
 
             return StatusCode(201, "Successfully created");
+        }
+        [HttpPut("{studentId}/status/{isActive}")]
+        public IActionResult UpdateStudentStatus(int studentId, bool isActive)
+        {
+            var result = _studentService.UpdateStudentStatus(studentId, isActive);
+            if (!result) return NotFound("Student not found or error occurred");
+            return Ok("Successfully updated student status");
         }
     }
 }

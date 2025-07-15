@@ -12,5 +12,6 @@ namespace ExamSystem.Application.DTO
         public string Email { get; set; }
         public string PasswordHash { get; set; }
         public string Username { get; set; }
+        public bool IsActive { get; set; } = true;
     }
 }

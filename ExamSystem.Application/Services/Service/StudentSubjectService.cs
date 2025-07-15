@@ -3,11 +3,6 @@ using ExamSystem.Application.DTO;
 using ExamSystem.Application.Services.IService;
 using ExamSystem.Domain.Entities;
 using ExamSystem.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExamSystem.Application.Services.Service
 {
@@ -29,6 +24,11 @@ namespace ExamSystem.Application.Services.Service
                 return false;
             var studentSubject = _mapper.Map<StudentSubject>(studentSubjectDto);
             return _studentSubjectRepository.Create(studentSubject);
+        }
+
+        public List<StudentSubjectDto> GetAllStudentSubject()
+        {
+            return _mapper.Map<List<StudentSubjectDto>>(_studentSubjectRepository.GetAll());
         }
     }
 }

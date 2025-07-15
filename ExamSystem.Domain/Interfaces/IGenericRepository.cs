@@ -5,6 +5,7 @@ namespace ExamSystem.Domain.Interfaces
     {
         ICollection<T> GetAll();
         T GetById(int id);
+        IQueryable<T> Get();
         T GetByName(string name);
         bool Exists(int id);
         bool Create(T entity);

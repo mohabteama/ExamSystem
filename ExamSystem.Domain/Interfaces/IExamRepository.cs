@@ -9,5 +9,6 @@ namespace ExamSystem.Domain.Interfaces
 {
     public interface IExamRepository : IGenericRepository<Exam>
     {
+        public List<Exam> GetExamsByStudentId(int studentId);
     }
 }

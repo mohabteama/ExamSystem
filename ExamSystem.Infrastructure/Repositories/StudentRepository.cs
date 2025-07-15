@@ -14,5 +14,10 @@ namespace ExamSystem.Infrastructure.Repositories
         public StudentRepository(ApplicationDbContext context) : base(context)
         {
         }
+
+        //public bool UpdateStudentStatus(bool isActive)
+        //{
+            
+        //}
     }
 }
