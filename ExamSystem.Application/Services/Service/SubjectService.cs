@@ -34,7 +34,7 @@ namespace ExamSystem.Application.Services.Service
         }
         public bool UpdateSubject(SubjectDto SubjectDto, int SubjectId)
         {
-            var exist = _subjectRepository.GetById(SubjectId);
+            var exist = _subjectRepository.GetByIntId(SubjectId);
             if (exist == null)
                 return false;
             var subject = _mapper.Map<Subject>(SubjectDto);

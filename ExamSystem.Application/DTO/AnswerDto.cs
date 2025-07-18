@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace ExamSystem.Application.DTO
 {
-    public class StudentSubjectDto
+    public class AnswerDto
     {
-        public string StudentId { get; set; }
-        public int SubjectId { get; set; }
+        public int QuestionId { get; set; }
+        public int OptionId { get; set; }
     }
 }

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExamSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250715115135_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20250716165807_updateOnDataBase")]
+    partial class updateOnDataBase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,8 +50,9 @@ namespace ExamSystem.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("StudentId")
-                        .HasColumnType("int");
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("SubjectId")
                         .HasColumnType("int");
@@ -108,8 +109,13 @@ namespace ExamSystem.Infrastructure.Migrations
                     b.Property<int>("Score")
                         .HasColumnType("int");
 
-                    b.Property<int>("StudentId")
-                        .HasColumnType("int");
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("SubjectName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -171,34 +177,6 @@ namespace ExamSystem.Infrastructure.Migrations
                     b.ToTable("Questions");
                 });
 
-            modelBuilder.Entity("ExamSystem.Domain.Entities.Student", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Students");
-                });
-
             modelBuilder.Entity("ExamSystem.Domain.Entities.StudentAnswer", b =>
                 {
                     b.Property<int>("Id")
@@ -216,8 +194,9 @@ namespace ExamSystem.Infrastructure.Migrations
                     b.Property<int>("SelectedOptionId")
                         .HasColumnType("int");
 
-                    b.Property<int>("StudentId")
-                        .HasColumnType("int");
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -234,8 +213,8 @@ namespace ExamSystem.Infrastructure.Migrations
 
             modelBuilder.Entity("ExamSystem.Domain.Entities.StudentSubject", b =>
                 {
-                    b.Property<int>("StudentId")
-                        .HasColumnType("int");
+                    b.Property<string>("StudentId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("SubjectId")
                         .HasColumnType("int");
@@ -328,6 +307,11 @@ namespace ExamSystem.Infrastructure.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -379,6 +363,10 @@ namespace ExamSystem.Infrastructure.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasDiscriminator().HasValue("IdentityUser");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -460,6 +448,16 @@ namespace ExamSystem.Infrastructure.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("ExamSystem.Domain.Entities.Student", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.HasDiscriminator().HasValue("Student");
                 });
 
             modelBuilder.Entity("ExamSystem.Domain.Entities.Exam", b =>
@@ -670,20 +668,20 @@ namespace ExamSystem.Infrastructure.Migrations
                     b.Navigation("StudentAnswers");
                 });
 
-            modelBuilder.Entity("ExamSystem.Domain.Entities.Student", b =>
-                {
-                    b.Navigation("Exams");
-
-                    b.Navigation("StudentAnswers");
-
-                    b.Navigation("StudentSubjects");
-                });
-
             modelBuilder.Entity("ExamSystem.Domain.Entities.Subject", b =>
                 {
                     b.Navigation("Exams");
 
                     b.Navigation("Questions");
+
+                    b.Navigation("StudentSubjects");
+                });
+
+            modelBuilder.Entity("ExamSystem.Domain.Entities.Student", b =>
+                {
+                    b.Navigation("Exams");
+
+                    b.Navigation("StudentAnswers");
 
                     b.Navigation("StudentSubjects");
                 });

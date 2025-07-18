@@ -10,7 +10,8 @@ namespace ExamSystem.Domain.Entities
     {
         public int Id { get; set; }
         public int ExamId { get; set; }
-        public int StudentId { get; set; }
+        public string StudentId { get; set; }
+        public string SubjectName { get; set; }
         public int Score { get; set; }
         public bool IsPassed { get; set; }
 

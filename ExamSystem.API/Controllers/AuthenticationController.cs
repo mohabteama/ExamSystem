@@ -3,7 +3,6 @@ using ExamSystem.Application.DTO;
 using ExamSystem.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -16,9 +15,9 @@ namespace ExamSystem.API.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<Student> _userManager;
         private readonly JwtConfig _jwtConfig;
-        public AuthenticationController(UserManager<IdentityUser> userManager, IOptions<JwtConfig> jwtConfig)
+        public AuthenticationController(UserManager<Student> userManager, IOptions<JwtConfig> jwtConfig)
         {
             _userManager = userManager;
             _jwtConfig = jwtConfig.Value;
@@ -34,7 +33,7 @@ namespace ExamSystem.API.Controllers
                 {
                     return BadRequest("User already exists with this email.");
                 }
-                var NewUser = new IdentityUser
+                var NewUser = new Student
                 {
                     UserName = requestDot.Name,
                     Email = requestDot.Email
@@ -46,7 +45,7 @@ namespace ExamSystem.API.Controllers
                     var token = GenerateJwtToken(NewUser);
                     return Ok(new AuthResult()
                     {
-                        Result = true, // fe al video 3mlha result = true
+                        Result = true, 
                         Token = token,
                     });
                 }
@@ -98,11 +97,6 @@ namespace ExamSystem.API.Controllers
                 Result = true
             });
         }
-
-
-
-
-
         private string GenerateJwtToken(IdentityUser user)
         {
             var JwtTokenHandler = new JwtSecurityTokenHandler();

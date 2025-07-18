@@ -9,7 +9,7 @@ namespace ExamSystem.Application.DTO
     public class ExamDto
     {
         public int Id { get; set; }
-        public int StudentId { get; set; }
+        public string StudentId { get; set; }
         public int SubjectId { get; set; }
         public string Difficulty { get; set; }
         public int TotalQuestionsCount { get; set; }

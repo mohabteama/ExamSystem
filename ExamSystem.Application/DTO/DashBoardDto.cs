@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace ExamSystem.Application.DTO
 {
-    public class StudentSubjectDto
+    public class DashBoardDto
     {
-        public string StudentId { get; set; }
-        public int SubjectId { get; set; }
+        public int TotalExams { get; set; }
+        public int TotalStudents { get; set; }
+        public int TotalSubjects { get; set; }
     }
 }

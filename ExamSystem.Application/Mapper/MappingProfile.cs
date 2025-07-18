@@ -13,7 +13,7 @@ namespace ExamSystem.Application.Mapper
             CreateMap<ExamResult, ExamResultDto>().ReverseMap();
             CreateMap<Option, OptionDto>().ReverseMap();
             CreateMap<Question, QuestionDto>().ReverseMap();
-            CreateMap<Student, StudentDto>().ReverseMap();
+            CreateMap<Student, StudentDto>();
             CreateMap<StudentAnswer, StudentAnswerDto>().ReverseMap();
             CreateMap<StudentSubject, StudentSubjectDto>().ReverseMap();
             CreateMap<Subject, SubjectDto>().ReverseMap();

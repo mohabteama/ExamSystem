@@ -30,6 +30,8 @@ namespace ExamSystem.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Discriminator = table.Column<string>(type: "nvarchar(13)", maxLength: 13, nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -48,22 +50,6 @@ namespace ExamSystem.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Students",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Students", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -191,7 +177,7 @@ namespace ExamSystem.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    StudentId = table.Column<int>(type: "int", nullable: false),
+                    StudentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     SubjectId = table.Column<int>(type: "int", nullable: false),
                     Difficulty = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TotalQuestionsCount = table.Column<int>(type: "int", nullable: false),
@@ -204,9 +190,9 @@ namespace ExamSystem.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Exams", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Exams_Students_StudentId",
+                        name: "FK_Exams_AspNetUsers_StudentId",
                         column: x => x.StudentId,
-                        principalTable: "Students",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -242,16 +228,16 @@ namespace ExamSystem.Infrastructure.Migrations
                 name: "StudentSubjects",
                 columns: table => new
                 {
-                    StudentId = table.Column<int>(type: "int", nullable: false),
+                    StudentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     SubjectId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_StudentSubjects", x => new { x.StudentId, x.SubjectId });
                     table.ForeignKey(
-                        name: "FK_StudentSubjects_Students_StudentId",
+                        name: "FK_StudentSubjects_AspNetUsers_StudentId",
                         column: x => x.StudentId,
-                        principalTable: "Students",
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -269,7 +255,7 @@ namespace ExamSystem.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ExamId = table.Column<int>(type: "int", nullable: false),
-                    StudentId = table.Column<int>(type: "int", nullable: false),
+                    StudentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Score = table.Column<int>(type: "int", nullable: false),
                     IsPassed = table.Column<bool>(type: "bit", nullable: false)
                 },
@@ -277,17 +263,17 @@ namespace ExamSystem.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_ExamResults", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_ExamResults_AspNetUsers_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_ExamResults_Exams_ExamId",
                         column: x => x.ExamId,
                         principalTable: "Exams",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ExamResults_Students_StudentId",
-                        column: x => x.StudentId,
-                        principalTable: "Students",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -344,13 +330,19 @@ namespace ExamSystem.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ExamId = table.Column<int>(type: "int", nullable: false),
-                    StudentId = table.Column<int>(type: "int", nullable: false),
+                    StudentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     QuestionId = table.Column<int>(type: "int", nullable: false),
                     SelectedOptionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_StudentAnswers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_StudentAnswers_AspNetUsers_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_StudentAnswers_Exams_ExamId",
                         column: x => x.ExamId,
@@ -367,12 +359,6 @@ namespace ExamSystem.Infrastructure.Migrations
                         name: "FK_StudentAnswers_Questions_QuestionId",
                         column: x => x.QuestionId,
                         principalTable: "Questions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_StudentAnswers_Students_StudentId",
-                        column: x => x.StudentId,
-                        principalTable: "Students",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -517,16 +503,13 @@ namespace ExamSystem.Infrastructure.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
                 name: "Exams");
 
             migrationBuilder.DropTable(
                 name: "Options");
 
             migrationBuilder.DropTable(
-                name: "Students");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Questions");

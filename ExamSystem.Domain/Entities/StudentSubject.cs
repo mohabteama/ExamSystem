@@ -8,7 +8,7 @@ namespace ExamSystem.Domain.Entities
 {
     public class StudentSubject
     {
-        public int StudentId { get; set; }
+        public string StudentId { get; set; }
         public int SubjectId { get; set; }
 
         public Student Student { get; set; }

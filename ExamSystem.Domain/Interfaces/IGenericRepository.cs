@@ -4,7 +4,10 @@ namespace ExamSystem.Domain.Interfaces
     public interface IGenericRepository<T> where T : class
     {
         ICollection<T> GetAll();
-        T GetById(int id);
+        Task<(ICollection<T> Items, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize);
+        Task AddAsync(T entity);
+        T GetByIntId(int id);
+        T GetByStringId(string id);
         IQueryable<T> Get();
         T GetByName(string name);
         bool Exists(int id);

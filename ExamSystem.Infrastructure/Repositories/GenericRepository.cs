@@ -13,6 +13,28 @@ namespace ExamSystem.Infrastructure.Repositories
             _context = context;
             _dbSet = _context.Set<T>();
         }
+        public async Task<(ICollection<T> Items, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize)
+        {
+            // Ensure valid pagination parameters
+            pageNumber = pageNumber < 1 ? 1 : pageNumber;
+            pageSize = pageSize < 1 ? 10 : pageSize;
+
+            // Get total count
+            var totalCount = await _dbSet.CountAsync();
+
+            // Get paginated data
+            var items = await _dbSet
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (items, totalCount);
+        }
+        public async Task AddAsync(T entity)
+        {
+            await _context.Set<T>().AddAsync(entity);
+            await _context.SaveChangesAsync();
+        }
         public ICollection<T> GetAll()
         {
             return _dbSet.ToList();
@@ -22,7 +44,11 @@ namespace ExamSystem.Infrastructure.Repositories
             return _dbSet;
         }
 
-        public T GetById(int id)
+        public T GetByStringId(string id)
+        {
+            return _dbSet.Find(id);
+        }
+        public T GetByIntId(int id)
         {
             return _dbSet.Find(id);
         }

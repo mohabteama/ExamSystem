@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace ExamSystem.Infrastructure.Data
 {
@@ -11,6 +12,18 @@ namespace ExamSystem.Infrastructure.Data
             : base(options)
         {
         }
+        public ApplicationDbContext()
+        {
+        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                // Hard-coded connection string for design-time
+                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=ExamSystem;Trusted_Connection=True;MultipleActiveResultSets=true");
+            }
+        }
+
 
         public DbSet<Student> Students { get; set; }
         public DbSet<Subject> Subjects { get; set; }
@@ -28,7 +41,7 @@ namespace ExamSystem.Infrastructure.Data
                     
             modelBuilder.Entity<Student>(entity =>
             {
-                entity.HasKey(e => e.Id);
+                //entity.HasKey(e => e.Id);
 
                 entity.HasMany(s => s.Exams)
                       .WithOne(e => e.Student)

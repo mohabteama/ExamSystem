@@ -2,6 +2,7 @@ using ExamSystem.API.Configurations;
 using ExamSystem.Application.Mapper;
 using ExamSystem.Application.Services.IService;
 using ExamSystem.Application.Services.Service;
+using ExamSystem.Domain.Entities;
 using ExamSystem.Domain.Interfaces;
 using ExamSystem.Infrastructure.Data;
 using ExamSystem.Infrastructure.Repositories;
@@ -16,6 +17,8 @@ var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
 builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
+builder.Services.AddScoped<IExamResultRepository, ExamResultRepository>();
+builder.Services.AddScoped<IDashBoardRepository, DashBoardRepository>();
 builder.Services.AddScoped<IStudentSubjectRepository, StudentSubjectRepository>();
 builder.Services.AddScoped<IExamRepository, ExamRepository>();
 builder.Services.AddScoped<IOptionRepository, OptionRepository>();
@@ -27,6 +30,10 @@ builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IStudentSubjectService, StudentSubjectService>();
 builder.Services.AddScoped<IOptionService, OptionService>();
 builder.Services.AddScoped<IExamService, ExamService>();
+builder.Services.AddScoped<IDashBoardService, DashBoardService>();
+builder.Services.AddScoped<IExamResultService, ExamResultService>();
+builder.Services.AddScoped<IStudentAnswerRepository, StudentAnswerRepository>();
+builder.Services.AddScoped<IExamQuestionRepository, ExamQuestionRepository>();
 
 
 builder.Services.AddControllers();
@@ -68,7 +75,7 @@ builder.Services.AddAutoMapper(
     typeof(MappingProfile).Assembly);
 
     builder.Services.AddDbContext<ApplicationDbContext>();
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<Student, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

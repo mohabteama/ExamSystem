@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace ExamSystem.Domain.Interfaces
 {
-    public interface IStudentRepository : IGenericRepository<Student>
+    public interface IStudentAnswerRepository : IGenericRepository<StudentAnswer>
     {
-        Task<(ICollection<Student> Students, int TotalCount)> GetStudentsPagedAsync(int pageNumber, int pageSize, bool? isActive = null);
+        Task<IEnumerable<StudentAnswer>> GetByExamAndStudentIdAsync(int examId, string studentId);
     }
 }
