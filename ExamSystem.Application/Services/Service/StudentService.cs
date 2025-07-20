@@ -45,10 +45,8 @@ namespace ExamSystem.Application.Services.Service
             if (students == null || !students.Any())
                 throw new ArgumentException("No students found.");
 
-            // Map to DTOs
             var studentDtos = _mapper.Map<List<StudentDto>>(students);
 
-            // Calculate total pages
             var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
             return new PaginatedResultDto<StudentDto>

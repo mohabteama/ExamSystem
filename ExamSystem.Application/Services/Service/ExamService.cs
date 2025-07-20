@@ -41,13 +41,10 @@ namespace ExamSystem.Application.Services.Service
         {
             var (exams, totalCount) = await _examRepository.GetAllExamsPagedAsync(pageNumber, pageSize, status);
 
-            // Map exams to DTOs
             var examDtos = _mapper.Map<List<ExamDto>>(exams);
 
-            // Calculate total pages
             int totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
-            // Create and return paginated result
             return new PaginatedResultDto<ExamDto>
             {
                 Items = examDtos,
@@ -60,27 +57,21 @@ namespace ExamSystem.Application.Services.Service
 
         public async Task<ExamSubmissionResultDto> SubmitExamAsync(ExamSubmissionDto submission)
         {
-            // Validate student exists
             var student =  _studentRepository.GetByStringId(submission.StudentId);
             if (student == null)
             {
                 throw new ArgumentException("Student not found");
             }
 
-            // Validate exam exists
             var exam =  _examRepository.GetByIntId(submission.ExamId);
             if (exam == null)
             {
                 throw new ArgumentException("Exam not found");
             }
 
-            
-
-            // Get all exam questions
             var examQuestions = await _examQuestionRepository.GetByExamIdAsync(submission.ExamId);
             var examQuestionIds = examQuestions.Select(eq => eq.QuestionId).ToHashSet();
 
-            // Validate all answers are for questions in this exam
             foreach (var answer in submission.Answers)
             {
                 if (!examQuestionIds.Contains(answer.QuestionId))
@@ -89,28 +80,24 @@ namespace ExamSystem.Application.Services.Service
                 }
             }
 
-            // Calculate score and create student answers
             int correctAnswers = 0;
             int totalScore = 0;
             List<StudentAnswer> studentAnswers = new List<StudentAnswer>();
 
             foreach (var answer in submission.Answers)
             {
-                // Get question
                 var question =  _questionRepository.GetByIntId(answer.QuestionId);
                 if (question == null)
                 {
                     throw new ArgumentException($"Question {answer.QuestionId} not found");
                 }
 
-                // Get selected option
                 var selectedOption =  _optionRepository.GetByIntId(answer.OptionId);
                 if (selectedOption == null || selectedOption.QuestionId != question.Id)
                 {
                     throw new ArgumentException($"Option {answer.OptionId} not found for question {answer.QuestionId}");
                 }
 
-                // Create student answer
                 var studentAnswer = new StudentAnswer
                 {
                     ExamId = submission.ExamId,
@@ -121,7 +108,6 @@ namespace ExamSystem.Application.Services.Service
 
                 studentAnswers.Add(studentAnswer);
 
-                // Check if answer is correct and update score
                 if (selectedOption.IsCorrect)
                 {
                     correctAnswers++;
@@ -129,24 +115,20 @@ namespace ExamSystem.Application.Services.Service
                 }
             }
 
-            // Save all student answers
             foreach (var answer in studentAnswers)
             {
                 await _studentAnswerRepository.AddAsync(answer);
             }
 
-            // Create and save exam result
             var examResult = new ExamResult
             {
                 ExamId = submission.ExamId,
                 StudentId = submission.StudentId,
                 Score = totalScore,
-                
-
             };
 
             await _examResultRepository.AddAsync(examResult);
-            // Return result
+
             return new ExamSubmissionResultDto
             {
                 ResultId = examResult.Id,
@@ -161,24 +143,10 @@ namespace ExamSystem.Application.Services.Service
             var exam = _mapper.Map<Exam>(examDto);
             return _examRepository.Create(exam);
         }
-        //public List<ExamDto> GetExamHistoryByStudentId(string studentId)
-        //{
-        //    var exams = _examRepository.GetExamsByStudentId(studentId);
-        //    if (exams == null || !exams.Any())
-        //        return new List<ExamDto>();
-        //    return _mapper.Map<List<ExamDto>>(exams);
-        //}
-        //public List<ExamDto> GetStudentExamsByStudentId(string studentId)
-        //{
-        //    var StudentExams = _examRepository.GetStudentExamsByStudentId(studentId);
-        //    if (StudentExams == null || !StudentExams.Any())
-        //        return new List<ExamDto>();
-        //    return _mapper.Map<List<ExamDto>>(StudentExams);
-        //}
         public async Task<PaginatedResultDto<ExamDto>> GetStudentExamHistoryPagedAsync(
             string studentId, int pageNumber, int pageSize, string status = null)
         {
-            // Validate student exists
+
             var student = _studentRepository.GetByStringId(studentId);
             if (student == null)
             {
@@ -188,13 +156,10 @@ namespace ExamSystem.Application.Services.Service
             var (exams, totalCount) = await _examRepository.GetStudentExamHistoryPagedAsync(
                 studentId, pageNumber, pageSize, status);
 
-            // Map exams to DTOs
             var examDtos = _mapper.Map<List<ExamDto>>(exams);
 
-            // Calculate total pages
             int totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
-            // Create and return paginated result
             return new PaginatedResultDto<ExamDto>
             {
                 Items = examDtos,
