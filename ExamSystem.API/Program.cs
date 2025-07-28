@@ -67,6 +67,11 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("AdminOnly", policy => policy.RequireClaim("role", "Admin"));
     options.AddPolicy("StudentOnly", policy => policy.RequireClaim("role", "Student"));
 });
+
+builder.Services.AddCors(options => options.AddPolicy("FrontEnd",policy => {
+    policy.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader().AllowCredentials(); 
+}));
+
 builder.Services.AddOpenApi();
     builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -105,6 +110,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     app.UseRouting();
  
     app.UseAuthorization();
+
+    app.UseCors("FrontEnd");
 
     app.MapControllers();
 

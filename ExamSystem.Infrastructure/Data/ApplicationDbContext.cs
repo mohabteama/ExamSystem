@@ -38,7 +38,7 @@ namespace ExamSystem.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-                    
+
             modelBuilder.Entity<Student>(entity =>
             {
                 //entity.HasKey(e => e.Id);
@@ -47,12 +47,12 @@ namespace ExamSystem.Infrastructure.Data
                       .WithOne(e => e.Student)
                       .HasForeignKey(e => e.StudentId)
                       .OnDelete(DeleteBehavior.Cascade);
-                   
+
                 entity.HasMany(s => s.StudentAnswers)
                       .WithOne(ss => ss.Student)
                       .HasForeignKey(ss => ss.StudentId)
                       .OnDelete(DeleteBehavior.Restrict);
-                
+
                 //entity.HasMany(s => s.Subjects)
                 //      .WithMany()
                 //      .UsingEntity(j => j.ToTable("StudentSubjects"));
@@ -97,9 +97,9 @@ namespace ExamSystem.Infrastructure.Data
                       .WithOne(sa => sa.Question)
                       .HasForeignKey(sa => sa.QuestionId)
                       .OnDelete(DeleteBehavior.Restrict);
-            });
 
-            modelBuilder.Entity<Option>(entity =>
+
+                modelBuilder.Entity<Option>(entity =>
             {
                 entity.HasKey(e => e.Id);
 
@@ -109,49 +109,49 @@ namespace ExamSystem.Infrastructure.Data
                       .OnDelete(DeleteBehavior.Restrict);
             });
 
-            modelBuilder.Entity<Exam>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                
-                entity.HasMany(e => e.ExamQuestions)
-                      .WithOne(eq => eq.Exam)
-                      .HasForeignKey(eq => eq.ExamId)
-                      .OnDelete(DeleteBehavior.Cascade);
+                modelBuilder.Entity<Exam>(entity =>
+                {
+                    entity.HasKey(e => e.Id);
 
-                entity.HasMany(e => e.StudentAnswers)
-                      .WithOne(sa => sa.Exam)
-                      .HasForeignKey(sa => sa.ExamId)
-                      .OnDelete(DeleteBehavior.Cascade);
+                    entity.HasMany(e => e.ExamQuestions)
+                          .WithOne(eq => eq.Exam)
+                          .HasForeignKey(eq => eq.ExamId)
+                          .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasOne(e => e.Result)
-                      .WithOne(er => er.Exam)
-                      .HasForeignKey<ExamResult>(er => er.ExamId)
-                      .OnDelete(DeleteBehavior.Cascade);
+                    entity.HasMany(e => e.StudentAnswers)
+                          .WithOne(sa => sa.Exam)
+                          .HasForeignKey(sa => sa.ExamId)
+                          .OnDelete(DeleteBehavior.Cascade);
+
+                    entity.HasOne(e => e.Result)
+                          .WithOne(er => er.Exam)
+                          .HasForeignKey<ExamResult>(er => er.ExamId)
+                          .OnDelete(DeleteBehavior.Cascade);
+                });
+
+                modelBuilder.Entity<ExamQuestion>(entity =>
+                {
+                    entity.HasKey(e => e.Id);
+                });
+
+                modelBuilder.Entity<StudentAnswer>(entity =>
+                {
+                    entity.HasKey(e => e.Id);
+                });
+
+                modelBuilder.Entity<ExamResult>(entity =>
+                {
+                    entity.HasKey(e => e.Id);
+
+                    entity.HasOne(er => er.Student)
+                          .WithMany()
+                          .HasForeignKey(er => er.StudentId)
+                          .OnDelete(DeleteBehavior.Restrict);
+
+                });
+
+                modelBuilder.Entity<StudentSubject>()
+                       .HasKey(ss => new { ss.StudentId, ss.SubjectId });
             });
-
-            modelBuilder.Entity<ExamQuestion>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-            });
-
-            modelBuilder.Entity<StudentAnswer>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-            });
-
-            modelBuilder.Entity<ExamResult>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-
-                entity.HasOne(er => er.Student)
-                      .WithMany()
-                      .HasForeignKey(er => er.StudentId)
-                      .OnDelete(DeleteBehavior.Restrict);
-
-            });
-
-            modelBuilder.Entity<StudentSubject>()
-                   .HasKey(ss => new { ss.StudentId, ss.SubjectId });
-        }
-    }
+    } }
 }

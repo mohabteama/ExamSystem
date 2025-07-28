@@ -5,6 +5,6 @@ namespace ExamSystem.Application.Services.IService
 {
     public interface IQuestionService
     {
-        bool CreateQuestion(QuestionDto questionDto, int SubjectId);
+        bool CreateQuestion(CreateQuestionDto CreateQuestionDto, int SubjectId);
     }
 }

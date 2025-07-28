@@ -8,7 +8,10 @@ namespace ExamSystem.Application.DTO
 {
     public class ExamResultDto
     {
+        public int ExamId { get; set; }
+        public string StudentId { get; set; }
+        public string SubjectName { get; set; }
         public int Score { get; set; } = 10;
-        public bool IsPassed { get; set; } = true;
+        public DateTime StartTime { get; set; } = DateTime.UtcNow;
     }
 }

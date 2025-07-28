@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExamSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250717213154_addprop")]
-    partial class addprop
+    [Migration("20250728140520_bd1")]
+    partial class bd1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -109,6 +109,9 @@ namespace ExamSystem.Infrastructure.Migrations
                     b.Property<int>("Score")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("StudentId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -166,6 +169,9 @@ namespace ExamSystem.Infrastructure.Migrations
                     b.Property<int>("Difficulty")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ExamId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Score")
                         .HasColumnType("int");
 
@@ -177,6 +183,8 @@ namespace ExamSystem.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ExamId");
 
                     b.HasIndex("SubjectId");
 
@@ -536,6 +544,10 @@ namespace ExamSystem.Infrastructure.Migrations
 
             modelBuilder.Entity("ExamSystem.Domain.Entities.Question", b =>
                 {
+                    b.HasOne("ExamSystem.Domain.Entities.Exam", null)
+                        .WithMany("Questions")
+                        .HasForeignKey("ExamId");
+
                     b.HasOne("ExamSystem.Domain.Entities.Subject", "Subject")
                         .WithMany("Questions")
                         .HasForeignKey("SubjectId")
@@ -653,6 +665,8 @@ namespace ExamSystem.Infrastructure.Migrations
             modelBuilder.Entity("ExamSystem.Domain.Entities.Exam", b =>
                 {
                     b.Navigation("ExamQuestions");
+
+                    b.Navigation("Questions");
 
                     b.Navigation("Result")
                         .IsRequired();

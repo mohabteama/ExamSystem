@@ -13,6 +13,7 @@ namespace ExamSystem.Domain.Entities
         public string StudentId { get; set; }
         public string SubjectName { get; set; }
         public int Score { get; set; }
+        public DateTime StartTime { get; set; } = DateTime.UtcNow;
         public bool IsPassed { get; set; }
 
         public Exam Exam { get; set; }

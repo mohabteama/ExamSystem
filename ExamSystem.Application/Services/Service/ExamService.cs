@@ -16,10 +16,12 @@ namespace ExamSystem.Application.Services.Service
         private readonly IStudentAnswerRepository _studentAnswerRepository;
         private readonly IExamResultRepository _examResultRepository;
         private readonly IExamQuestionRepository _examQuestionRepository;
+        private readonly ISubjectRepository _subjectRepository;
         private readonly IMapper _mapper;
 
         public ExamService(
             IExamRepository examRepository,
+            ISubjectRepository subjectRepository,
             IStudentRepository studentRepository,
             IQuestionRepository questionRepository,
             IOptionRepository optionRepository,
@@ -28,6 +30,7 @@ namespace ExamSystem.Application.Services.Service
             IExamQuestionRepository examQuestionRepository,
             IMapper _mapper)
         {
+            _subjectRepository = subjectRepository;
             _examRepository = examRepository;
             _studentRepository = studentRepository;
             _questionRepository = questionRepository;
@@ -37,17 +40,17 @@ namespace ExamSystem.Application.Services.Service
             _examQuestionRepository = examQuestionRepository;
             this._mapper = _mapper;
         }
-        public async Task<PaginatedResultDto<ExamDto>> GetAllExamHistoryPagedAsync(int pageNumber, int pageSize, string status = null)
+        public async Task<PaginatedResultDto<ExamResultDto>> GetAllExamHistoryPagedAsync(int pageNumber, int pageSize, string status = null)
         {
             var (exams, totalCount) = await _examRepository.GetAllExamsPagedAsync(pageNumber, pageSize, status);
 
-            var examDtos = _mapper.Map<List<ExamDto>>(exams);
+            var examResultDtos = _mapper.Map<List<ExamResultDto>>(exams);
 
             int totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
-            return new PaginatedResultDto<ExamDto>
+            return new PaginatedResultDto<ExamResultDto>
             {
-                Items = examDtos,
+                Items = examResultDtos,
                 PageNumber = pageNumber,
                 PageSize = pageSize,
                 TotalCount = totalCount,
@@ -57,13 +60,13 @@ namespace ExamSystem.Application.Services.Service
 
         public async Task<ExamSubmissionResultDto> SubmitExamAsync(ExamSubmissionDto submission)
         {
-            var student =  _studentRepository.GetByStringId(submission.StudentId);
+            var student = _studentRepository.GetByStringId(submission.StudentId);
             if (student == null)
             {
                 throw new ArgumentException("Student not found");
             }
 
-            var exam =  _examRepository.GetByIntId(submission.ExamId);
+            var exam = _examRepository.GetByIntId(submission.ExamId);
             if (exam == null)
             {
                 throw new ArgumentException("Exam not found");
@@ -86,13 +89,13 @@ namespace ExamSystem.Application.Services.Service
 
             foreach (var answer in submission.Answers)
             {
-                var question =  _questionRepository.GetByIntId(answer.QuestionId);
+                var question = _questionRepository.GetByIntId(answer.QuestionId);
                 if (question == null)
                 {
                     throw new ArgumentException($"Question {answer.QuestionId} not found");
                 }
 
-                var selectedOption =  _optionRepository.GetByIntId(answer.OptionId);
+                var selectedOption = _optionRepository.GetByIntId(answer.OptionId);
                 if (selectedOption == null || selectedOption.QuestionId != question.Id)
                 {
                     throw new ArgumentException($"Option {answer.OptionId} not found for question {answer.QuestionId}");
@@ -135,13 +138,23 @@ namespace ExamSystem.Application.Services.Service
                 Score = totalScore,
                 TotalQuestions = examQuestions.Count(),
                 CorrectAnswers = correctAnswers,
-                
+
             };
         }
-        public bool CreateExam(ExamDto examDto, string studentId, int subjectId)
+        public async Task<bool> CreateExam(string studentId, int subjectId)
         {
-            var exam = _mapper.Map<Exam>(examDto);
-            return _examRepository.Create(exam);
+
+            var questions = await _examRepository.CreateRondomExamQuestions(subjectId,10);
+            Exam exam = new Exam
+            {
+                StudentId = studentId,
+                SubjectId = subjectId,
+                StartTime = DateTime.UtcNow,
+                Status = "InProgress",
+                Questions = questions
+            };
+            var result = await _examRepository.AddAsync(exam);
+           return result;
         }
         public async Task<PaginatedResultDto<ExamDto>> GetStudentExamHistoryPagedAsync(
             string studentId, int pageNumber, int pageSize, string status = null)
@@ -167,6 +180,35 @@ namespace ExamSystem.Application.Services.Service
                 PageSize = pageSize,
                 TotalCount = totalCount,
                 TotalPages = totalPages
+            };
+        }
+
+
+
+
+        public async  Task<ExamDto> GetExamWithQuestions(int examId)
+        {
+            var exam = await _examRepository.GetExamDetails(examId);
+            
+            if (exam == null) 
+                return null;
+            
+            return  new ExamDto
+            {
+                Id = exam.Id,
+                StartTime = DateTime.Now,
+                SubjectName = exam.Subject?.Name,
+                Questions = exam.Questions?.Select(q => new Question
+                {
+                    Id = q.Id,
+                    question = q.question,
+                    Options = q.Options.Select(o => new Option
+                    {
+                        Id = o.Id,
+                        Answer = o.Answer,
+                        IsCorrect = o.IsCorrect
+                    }).ToList()
+                }).ToList()
             };
         }
     }

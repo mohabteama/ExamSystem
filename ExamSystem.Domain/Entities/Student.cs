@@ -9,7 +9,6 @@ namespace ExamSystem.Domain.Entities
 {
     public class Student : IdentityUser
     {
-        
         public bool IsActive { get; set; } = true;
 
         public ICollection<Exam> Exams { get; set; }

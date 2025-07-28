@@ -27,10 +27,10 @@ namespace ExamSystem.Infrastructure.Repositories
 
             return (items, totalCount);
         }
-        public async Task AddAsync(T entity)
+        public async Task<bool> AddAsync(T entity)
         {
             await _context.Set<T>().AddAsync(entity);
-            await _context.SaveChangesAsync();  
+            return Save();
         }
         public ICollection<T> GetAll()
         {

@@ -18,33 +18,18 @@ namespace ExamSystem.API.Controllers
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
         [HttpPost()]
-        public IActionResult CreateExam([FromBody] ExamDto examDto, [FromQuery] string studentId, [FromQuery] int subjectId)
+        public async Task<IActionResult> CreateExam([FromQuery] string studentId, [FromQuery] int subjectId)
         {
-            if (!ModelState.IsValid || examDto == null)
+            if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            _examService.CreateExam(examDto, studentId, subjectId);
+           
+            var result = await _examService.CreateExam(studentId, subjectId);
+            if (result == false)
+            {
+                return BadRequest("Failed to create exam");
+            }
             return Ok("Successfully created");
         }
-        //[HttpGet("{studentId}")]
-        //public IActionResult GetExamHistoryByStudentId(string studentId)
-        //{
-        //    if (studentId == null)
-        //        return BadRequest("Invalid student ID.");
-        //    var examHistory = _examService.GetExamHistoryByStudentId(studentId);
-        //    if (examHistory == null || examHistory.Count == 0)
-        //        return NotFound("No exam history found for the given student ID.");
-        //    return Ok(examHistory);
-        //}
-        //[HttpGet("results/{studentId}")]
-        //public IActionResult GetStudentExamsByStudentId(string studentId)
-        //{
-        //    if (string.IsNullOrEmpty(studentId))
-        //        return BadRequest("Invalid student ID.");
-        //    var studentExams = _examService.GetStudentExamsByStudentId(studentId);
-        //    if (studentExams == null || studentExams.Count == 0)
-        //        return NotFound("No exams found for the given student ID.");
-        //    return Ok(studentExams);
-        //}
         [HttpPost("submit")]
         public async Task<ActionResult<ExamSubmissionResultDto>> SubmitExam(ExamSubmissionDto submission)
         {
@@ -120,5 +105,15 @@ namespace ExamSystem.API.Controllers
                 return StatusCode(500, "An error occurred while retrieving student exam history");
             }
         }
+        [HttpGet("exam/{examId}")]
+        public async Task<IActionResult> GetExam(int examId)
+        {
+            var examDto = await _examService.GetExamWithQuestions(examId);
+            if (examDto == null)
+                return NotFound();
+
+            return Ok(examDto);
+        }
+
     }
 }

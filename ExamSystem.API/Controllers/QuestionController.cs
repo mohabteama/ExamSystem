@@ -14,12 +14,16 @@ namespace ExamSystem.API.Controllers
             _questionService = questionService;
         }
         [HttpPost]
-        public IActionResult CreateQuestion( [FromBody] QuestionDto questionDto, [FromQuery] int SubjectID)
+        public IActionResult CreateQuestion( [FromBody] CreateQuestionDto CreateQuestionDto, [FromQuery] int SubjectID)
         {
-            if (!ModelState.IsValid || CreateQuestion == null)
+            if (!ModelState.IsValid || CreateQuestionDto == null)
                 return BadRequest(ModelState);
 
-            if (!_questionService.CreateQuestion(questionDto, SubjectID))
+            // Additional validation for the Text property
+            if (string.IsNullOrEmpty(CreateQuestionDto.question))
+                return BadRequest("Question text cannot be empty");
+
+            if (!_questionService.CreateQuestion(CreateQuestionDto, SubjectID))
                 return StatusCode(422, "Question already exists or error in creation");
 
             return Ok("Successfully created");

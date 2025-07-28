@@ -17,14 +17,14 @@ namespace ExamSystem.Application.Services.Service
             _mapper = mapper;
         }
         
-        public bool CreateQuestion(QuestionDto questionDto, int SubjectId)
+        public bool CreateQuestion(CreateQuestionDto CreateQuestionDto, int SubjectId)
         {
             var exist = _questionRepository.GetAll()
                 .Any(q => q.question.Trim().ToLower() ==
-                questionDto.question.Trim().ToLower());
+                CreateQuestionDto.question.Trim().ToLower());
             if (exist)
                 return false;
-            var question = _mapper.Map<Question>(questionDto);
+            var question = _mapper.Map<Question>(CreateQuestionDto);
             return _questionRepository.CreateQuestion(question, SubjectId);
         }   
     }

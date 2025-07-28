@@ -1,18 +1,13 @@
 ﻿using ExamSystem.Application.DTO;
-using ExamSystem.Domain.Entities;
-using ExamSystem.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ExamSystem.Application.Services.IService
 {
     public interface ISubjectService
     {
+        public Task<SubjectDto> GetSubjectWithQuestions(int SubjectId);
         List<SubjectDto> GetAllSubjects();
-        bool CreateSubject(SubjectDto SubjectDto);
+        bool CreateSubject(CreateSubjectDto CreateSubjectDto);
         bool UpdateSubject(SubjectDto SubjectDto, int SubjectId);
     }
 }
