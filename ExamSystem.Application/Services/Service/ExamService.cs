@@ -58,93 +58,11 @@ namespace ExamSystem.Application.Services.Service
             };
         }
 
-        public async Task<ExamSubmissionResultDto> SubmitExamAsync(ExamSubmissionDto submission)
-        {
-            var student = _studentRepository.GetByStringId(submission.StudentId);
-            if (student == null)
-            {
-                throw new ArgumentException("Student not found");
-            }
 
-            var exam = _examRepository.GetByIntId(submission.ExamId);
-            if (exam == null)
-            {
-                throw new ArgumentException("Exam not found");
-            }
-
-            var examQuestions = await _examQuestionRepository.GetByExamIdAsync(submission.ExamId);
-            var examQuestionIds = examQuestions.Select(eq => eq.QuestionId).ToHashSet();
-
-            foreach (var answer in submission.Answers)
-            {
-                if (!examQuestionIds.Contains(answer.QuestionId))
-                {
-                    throw new ArgumentException($"Question {answer.QuestionId} is not part of this exam");
-                }
-            }
-
-            int correctAnswers = 0;
-            int totalScore = 0;
-            List<StudentAnswer> studentAnswers = new List<StudentAnswer>();
-
-            foreach (var answer in submission.Answers)
-            {
-                var question = _questionRepository.GetByIntId(answer.QuestionId);
-                if (question == null)
-                {
-                    throw new ArgumentException($"Question {answer.QuestionId} not found");
-                }
-
-                var selectedOption = _optionRepository.GetByIntId(answer.OptionId);
-                if (selectedOption == null || selectedOption.QuestionId != question.Id)
-                {
-                    throw new ArgumentException($"Option {answer.OptionId} not found for question {answer.QuestionId}");
-                }
-
-                var studentAnswer = new StudentAnswer
-                {
-                    ExamId = submission.ExamId,
-                    StudentId = submission.StudentId,
-                    QuestionId = answer.QuestionId,
-                    SelectedOptionId = answer.OptionId,
-                };
-
-                studentAnswers.Add(studentAnswer);
-
-                if (selectedOption.IsCorrect)
-                {
-                    correctAnswers++;
-                    totalScore += question.Score;
-                }
-            }
-
-            foreach (var answer in studentAnswers)
-            {
-                await _studentAnswerRepository.AddAsync(answer);
-            }
-
-            var examResult = new ExamResult
-            {
-                ExamId = submission.ExamId,
-                StudentId = submission.StudentId,
-                Score = totalScore,
-            };
-
-            await _examResultRepository.AddAsync(examResult);
-
-            return new ExamSubmissionResultDto
-            {
-                ResultId = examResult.Id,
-                Score = totalScore,
-                TotalQuestions = examQuestions.Count(),
-                CorrectAnswers = correctAnswers,
-
-            };
-        }
-        public async Task<bool> CreateExam(string studentId, int subjectId)
+        public async Task<bool> CreateRondomQuestions(string studentId, int subjectId)
         {
 
-            var questions = await _examRepository.CreateRondomExamQuestions(subjectId,10);
+            var questions = await _examRepository.CreateRondomExamQuestions(subjectId, 10);
             Exam exam = new Exam
             {
                 StudentId = studentId,
@@ -154,7 +72,7 @@ namespace ExamSystem.Application.Services.Service
                 Questions = questions
             };
             var result = await _examRepository.AddAsync(exam);
-           return result;
+            return result;
         }
         public async Task<PaginatedResultDto<ExamDto>> GetStudentExamHistoryPagedAsync(
             string studentId, int pageNumber, int pageSize, string status = null)
@@ -186,14 +104,14 @@ namespace ExamSystem.Application.Services.Service
 
 
 
-        public async  Task<ExamDto> GetExamWithQuestions(int examId)
+        public async Task<ExamDto> GetExamWithQuestions(int examId)
         {
             var exam = await _examRepository.GetExamDetails(examId);
-            
-            if (exam == null) 
+
+            if (exam == null)
                 return null;
-            
-            return  new ExamDto
+
+            return new ExamDto
             {
                 Id = exam.Id,
                 StartTime = DateTime.Now,
@@ -205,11 +123,52 @@ namespace ExamSystem.Application.Services.Service
                     Options = q.Options.Select(o => new Option
                     {
                         Id = o.Id,
-                        Answer = o.Answer,
+                        option = o.option,
                         IsCorrect = o.IsCorrect
                     }).ToList()
                 }).ToList()
             };
         }
+
+        public async Task<CreateExamDto> CreateExam(string studentId, int subjectId)
+        {
+            var subject = await _subjectRepository.GetSubjectWithQuestions(subjectId);
+            var exam = await _examRepository.AddExam(new Exam
+            {
+                StudentId = studentId,
+                SubjectId = subjectId,
+                StartTime = DateTime.UtcNow,
+                Status = "InProgress",
+                ExamQuestions = new List<ExamQuestion>(),
+
+            });
+
+            foreach (var question in subject.Questions)
+            {
+                var examQuestion = new ExamQuestion
+                {
+                    QuestionId = question.Id,
+                    Question = question
+                };
+                exam.ExamQuestions.Add(examQuestion);
+            }
+            if (exam == null)
+            {
+                throw new ArgumentException("Exam creation failed.");
+            }
+            var result = _mapper.Map<CreateExamDto>(exam);
+            return result;
+        }
+
+        //    public async Task<SubmissionDto> submit(SubmissionDto submitDto, string studentId, int examId)
+        //    {
+        //        var exam = await _examRepository.Submit(studentId, examId);
+        //        if (exam == null)
+        //        {
+        //            throw new ArgumentException("Exam not found or already submitted.");
+        //        }
+        //        if (submitDto.Answer == exam.)
+        //    }
+        //}
     }
 }

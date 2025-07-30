@@ -6,6 +6,7 @@ namespace ExamSystem.Domain.Interfaces
         ICollection<T> GetAll();
         Task<(ICollection<T> Items, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize);
         Task<bool> AddAsync(T entity);
+        
         T GetByIntId(int id);
         T GetByStringId(string id);
         IQueryable<T> Get();

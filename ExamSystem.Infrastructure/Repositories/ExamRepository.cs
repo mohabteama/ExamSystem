@@ -10,7 +10,12 @@ namespace ExamSystem.Infrastructure.Repositories
     {
         public ExamRepository(ApplicationDbContext context) : base(context) { }
 
-
+        public async Task<Exam> AddExam(Exam entity)
+        {
+            await _context.Set<Exam>().AddAsync(entity);
+            await _context.SaveChangesAsync();
+            return entity;
+        }
 
         public Task<Exam> GetExamDetails(int id)
         {
@@ -88,17 +93,6 @@ namespace ExamSystem.Infrastructure.Repositories
             return (exams, totalCount);
         }
 
-
-
-
-
-
-
-
-
-
-
-
         public async Task<ICollection<Question>> CreateRondomExamQuestions(int subjectId, int numberOfQuestions)
         {
             var randomQuestions = await _context.Questions
@@ -108,6 +102,15 @@ namespace ExamSystem.Infrastructure.Repositories
                 .Take(numberOfQuestions) // Take 10 random questions
                 .ToListAsync();
             return (ICollection<Question>)randomQuestions;
+        }
+
+        public async Task<Exam> Submit(string studentId, int examId)
+        {
+            var exam = await _context.Exams
+                .Include(e => e.Student)
+                .Include(sa => sa.StudentAnswers)
+                .FirstOrDefaultAsync(e => e.Id == examId && e.StudentId == studentId);
+            return exam;
         }
     }
 }

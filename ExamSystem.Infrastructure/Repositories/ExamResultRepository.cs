@@ -10,16 +10,14 @@ namespace ExamSystem.Infrastructure.Repositories
     {
         public ExamResultRepository(ApplicationDbContext context) : base(context) { }
 
-        public ExamResult GetExamResult(string studentId, int examId)
+        public async Task<Exam> GetExamResultAsync(string studentId, int examId)
         {
-            var examResult = _context.ExamResults
-                .FirstOrDefault(er => er.StudentId == studentId && er.ExamId == examId);
+            var examResult = await _context.Exams
+                .Include(r => r.Result)
+                .Include(r => r.Student)
+                .Include(s => s.Subject)
+                .FirstOrDefaultAsync(e => e.StudentId == studentId && e.Id == examId);
             return examResult;
-        }
-        public async Task<ExamResult?> GetByExamAndStudentIdAsync(int examId, string studentId)
-        {
-            return await _context.Set<ExamResult>()
-                .FirstOrDefaultAsync(er => er.ExamId == examId && er.StudentId == studentId);
         }
     }
 }

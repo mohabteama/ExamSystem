@@ -15,11 +15,11 @@ namespace ExamSystem.Infrastructure.Repositories
         public SubjectRepository(ApplicationDbContext context) : base(context){ }
         public async Task<Subject> GetSubjectWithQuestions(int id)
         {
-        return await _context.Subjects
+        var result = await _context.Subjects
             .Include(q => q.Questions)
             .ThenInclude(o=>o.Options)
             .FirstOrDefaultAsync(s => s.Id == id);
-
+            return result;
         }
     }
 }

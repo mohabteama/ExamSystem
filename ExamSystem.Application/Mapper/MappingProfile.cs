@@ -20,6 +20,7 @@ namespace ExamSystem.Application.Mapper
             CreateMap<Subject, SubjectDto>().ReverseMap();
             CreateMap<Subject, CreateSubjectDto>().ReverseMap();
             CreateMap<Exam, ExamResultDto>().ReverseMap();
+            CreateMap<Exam, CreateExamDto>().ReverseMap();
 
         }
     }

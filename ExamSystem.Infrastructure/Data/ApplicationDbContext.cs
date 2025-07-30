@@ -1,8 +1,6 @@
 ﻿using ExamSystem.Domain.Entities;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace ExamSystem.Infrastructure.Data
 {
@@ -129,7 +127,7 @@ namespace ExamSystem.Infrastructure.Data
                           .OnDelete(DeleteBehavior.Cascade);
                 });
 
-                modelBuilder.Entity<ExamQuestion>(entity =>
+            modelBuilder.Entity<ExamQuestion>(entity =>
                 {
                     entity.HasKey(e => e.Id);
                 });

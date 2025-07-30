@@ -32,6 +32,7 @@ namespace ExamSystem.Infrastructure.Repositories
             await _context.Set<T>().AddAsync(entity);
             return Save();
         }
+        
         public ICollection<T> GetAll()
         {
             return _dbSet.ToList();

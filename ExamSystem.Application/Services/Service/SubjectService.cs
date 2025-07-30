@@ -55,7 +55,7 @@ namespace ExamSystem.Application.Services.Service
                     {
                         Id = o.Id,
                         QuestionId = o.QuestionId,
-                        Answer = o.Answer,
+                        option = o.option,
                         IsCorrect = o.IsCorrect
                     }).ToList() ?? new List<OptionDto>()
                 }).ToList() ?? new List<QuestionDto>(),

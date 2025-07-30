@@ -1,6 +1,4 @@
 ﻿
-using static ExamSystem.Domain.Entities.Question;
-
 namespace ExamSystem.Application.DTO
 {
     public class QuestionDto

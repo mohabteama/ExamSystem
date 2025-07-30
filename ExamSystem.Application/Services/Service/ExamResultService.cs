@@ -2,11 +2,7 @@
 using ExamSystem.Application.DTO;
 using ExamSystem.Application.Services.IService;
 using ExamSystem.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace ExamSystem.Application.Services.Service
 {
@@ -19,12 +15,17 @@ namespace ExamSystem.Application.Services.Service
             _examResultRepository = examResultRepository;
             _mapper = mapper;
         }
-        public Task<ExamResultDto> GetExamResultAsync(string studentId, int examId)
+
+
+        // deh 8lat lsa htt3adel al method btrga3 null 
+
+        public async Task<ExamResultDto> GetExamResultAsync(string studentId, int examId)
         {
-            var examResult = _examResultRepository.GetExamResult(studentId, examId);
+            var examResult =  _examResultRepository.GetExamResultAsync(studentId, examId);
             if (examResult == null)
-                return Task.FromResult<ExamResultDto>(null);
-            return Task.FromResult(_mapper.Map<ExamResultDto>(examResult));
+                return null;    
+            var Result = _mapper.Map<ExamResultDto>(examResult);
+            return Result;
         }
     }
 }

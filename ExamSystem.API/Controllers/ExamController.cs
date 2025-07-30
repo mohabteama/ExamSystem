@@ -18,41 +18,17 @@ namespace ExamSystem.API.Controllers
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
         [HttpPost()]
-        public async Task<IActionResult> CreateExam([FromQuery] string studentId, [FromQuery] int subjectId)
+        public async Task<IActionResult> CreateRondomExam([FromQuery] string studentId, [FromQuery] int subjectId)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
            
-            var result = await _examService.CreateExam(studentId, subjectId);
+            var result = await _examService.CreateRondomQuestions(studentId, subjectId);
             if (result == false)
             {
                 return BadRequest("Failed to create exam");
             }
             return Ok("Successfully created");
-        }
-        [HttpPost("submit")]
-        public async Task<ActionResult<ExamSubmissionResultDto>> SubmitExam(ExamSubmissionDto submission)
-        {
-            try
-            {
-                var result = await _examService.SubmitExamAsync(submission);
-                return Ok(result);
-            }
-            catch (ArgumentException ex)
-            {
-                _logger.LogWarning(ex, "Validation error during exam submission");
-                return BadRequest(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                _logger.LogWarning(ex, "Operation error during exam submission");
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error during exam submission");
-                return StatusCode(500, "An error occurred while processing your submission");
-            }
         }
         [HttpGet("history")]
         public async Task<IActionResult> GetAllExamHistory(
@@ -114,6 +90,21 @@ namespace ExamSystem.API.Controllers
 
             return Ok(examDto);
         }
-
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateExam([FromQuery] string studentId, [FromQuery] int subjectId)
+        {
+            if (string.IsNullOrEmpty(studentId) || subjectId <= 0)
+                return BadRequest("Invalid student ID or subject ID.");
+            try
+            {
+                var examDto = await _examService.CreateExam(studentId, subjectId);
+                return Ok(examDto);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating exam");
+                return StatusCode(500, "An error occurred while creating the exam");
+            }
+        }
     }
 }

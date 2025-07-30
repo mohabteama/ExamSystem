@@ -10,8 +10,7 @@ namespace ExamSystem.Domain.Entities
             Hard = 3
         }
 
-        public int Id { get; set; } 
-        public int Score { get; set; } 
+        public int Id { get; set; }
         public int SubjectId { get; set; }
 
         public string question { get; set; }
