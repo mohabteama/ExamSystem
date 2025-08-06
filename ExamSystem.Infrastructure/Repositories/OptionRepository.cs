@@ -11,6 +11,8 @@ namespace ExamSystem.Infrastructure.Repositories
         {
         }
 
+       
+
         public async Task<List<Option>> GetOptions(int QuestionId)
         {
             return await _context.Options.Where(o => o.QuestionId == QuestionId).ToListAsync();

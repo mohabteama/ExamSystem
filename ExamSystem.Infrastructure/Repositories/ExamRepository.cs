@@ -2,6 +2,8 @@
 using ExamSystem.Domain.Interfaces;
 using ExamSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using static ExamSystem.Domain.Entities.Question;
 
 
 namespace ExamSystem.Infrastructure.Repositories
@@ -19,7 +21,7 @@ namespace ExamSystem.Infrastructure.Repositories
 
         public Task<Exam> GetExamDetails(int id)
         {
-            return  _context.Exams
+            return _context.Exams
                 .Include(s => s.Subject)
                     .ThenInclude(q => q.Questions)
                         .ThenInclude(o => o.Options)
@@ -59,7 +61,7 @@ namespace ExamSystem.Infrastructure.Repositories
             int totalCount = await query.CountAsync();
 
             var exams = await query
-                .OrderByDescending(e => e.StartTime) 
+                .OrderByDescending(e => e.StartTime)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
@@ -95,22 +97,41 @@ namespace ExamSystem.Infrastructure.Repositories
 
         public async Task<ICollection<Question>> CreateRondomExamQuestions(int subjectId, int numberOfQuestions)
         {
-            var randomQuestions = await _context.Questions
-                .Include(q => q.Options)
-                .Where(q => q.SubjectId == subjectId)
-                .OrderBy(q => Guid.NewGuid()) // Randomly order the questions
-                .Take(numberOfQuestions) // Take 10 random questions
-                .ToListAsync();
-            return (ICollection<Question>)randomQuestions;
+
+            var subject = await _context.Subjects
+                .Include(q => q.Questions)
+                    .ThenInclude(o => o.Options)
+                .FirstOrDefaultAsync(s => s.Id == subjectId);
+
+
+            var randomQuestions = subject.Questions
+                .GroupBy(q => q.Id)
+                .Select(g => g.First())
+                .OrderBy(q => Guid.NewGuid())
+                .Take(numberOfQuestions)
+                .ToList();
+
+
+            return randomQuestions;
         }
 
-        public async Task<Exam> Submit(string studentId, int examId)
+
+
+
+
+
+        public async Task<Exam> CalculateExamScoreAsync(int examId)
         {
             var exam = await _context.Exams
-                .Include(e => e.Student)
-                .Include(sa => sa.StudentAnswers)
-                .FirstOrDefaultAsync(e => e.Id == examId && e.StudentId == studentId);
-            return exam;
+                .Include(e => e.Subject)
+                    .ThenInclude(eq => eq.Questions)
+                        .ThenInclude(q => q.Options)
+                .Include(e => e.StudentAnswers)
+                    .ThenInclude(sa => sa.SelectedOption)
+                .FirstOrDefaultAsync(e => e.Id == examId);
+
+            return exam;    
+
         }
     }
 }

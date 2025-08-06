@@ -3,6 +3,9 @@ using ExamSystem.Application.DTO;
 using ExamSystem.Application.Services.IService;
 using ExamSystem.Domain.Entities;
 using ExamSystem.Domain.Interfaces;
+using System;
+using static ExamSystem.Domain.Entities.Question;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace ExamSystem.Application.Services.Service
@@ -47,34 +50,37 @@ namespace ExamSystem.Application.Services.Service
             var examResultDtos = _mapper.Map<List<ExamResultDto>>(exams);
 
             int totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
-
+            
+            
             return new PaginatedResultDto<ExamResultDto>
             {
                 Items = examResultDtos,
                 PageNumber = pageNumber,
                 PageSize = pageSize,
                 TotalCount = totalCount,
-                TotalPages = totalPages
+                TotalPages = totalPages,
             };
         }
 
 
-        public async Task<bool> CreateRondomQuestions(string studentId, int subjectId)
-        {
-
-            var questions = await _examRepository.CreateRondomExamQuestions(subjectId, 10);
-            Exam exam = new Exam
+            public async Task<bool> CreateRondomQuestions(string studentId, int subjectId)
             {
-                StudentId = studentId,
-                SubjectId = subjectId,
-                StartTime = DateTime.UtcNow,
-                Status = "InProgress",
-                Questions = questions
-            };
-            var result = await _examRepository.AddAsync(exam);
-            return result;
-        }
-        public async Task<PaginatedResultDto<ExamDto>> GetStudentExamHistoryPagedAsync(
+
+
+
+                var questions = await _examRepository.CreateRondomExamQuestions(subjectId, 10);
+                Exam exam = new Exam
+                {
+                    StudentId = studentId,
+                    SubjectId = subjectId,
+                    StartTime = DateTime.UtcNow,
+                    Status = "InProgress",
+                    Questions = questions
+                };
+                var result = await _examRepository.AddAsync(exam);
+                return result;
+            }
+        public async Task<PaginatedResultDto<ExamHistoryDto>> GetStudentExamHistoryPagedAsync(
             string studentId, int pageNumber, int pageSize, string status = null)
         {
 
@@ -87,11 +93,11 @@ namespace ExamSystem.Application.Services.Service
             var (exams, totalCount) = await _examRepository.GetStudentExamHistoryPagedAsync(
                 studentId, pageNumber, pageSize, status);
 
-            var examDtos = _mapper.Map<List<ExamDto>>(exams);
+            var examDtos = _mapper.Map<List<ExamHistoryDto>>(exams);
 
             int totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
-            return new PaginatedResultDto<ExamDto>
+            return new PaginatedResultDto<ExamHistoryDto>
             {
                 Items = examDtos,
                 PageNumber = pageNumber,
@@ -101,12 +107,10 @@ namespace ExamSystem.Application.Services.Service
             };
         }
 
-
-
-
         public async Task<ExamDto> GetExamWithQuestions(int examId)
         {
             var exam = await _examRepository.GetExamDetails(examId);
+            
 
             if (exam == null)
                 return null;
@@ -132,43 +136,56 @@ namespace ExamSystem.Application.Services.Service
 
         public async Task<CreateExamDto> CreateExam(string studentId, int subjectId)
         {
-            var subject = await _subjectRepository.GetSubjectWithQuestions(subjectId);
+            Random random = new Random();
+            int randomFrom1To20 = random.Next(7, 10);
+
+            var rondomquestions = await _examRepository.CreateRondomExamQuestions(subjectId, randomFrom1To20);
+
             var exam = await _examRepository.AddExam(new Exam
             {
                 StudentId = studentId,
                 SubjectId = subjectId,
                 StartTime = DateTime.UtcNow,
                 Status = "InProgress",
-                ExamQuestions = new List<ExamQuestion>(),
-
+                Questions = rondomquestions
             });
 
-            foreach (var question in subject.Questions)
-            {
-                var examQuestion = new ExamQuestion
-                {
-                    QuestionId = question.Id,
-                    Question = question
-                };
-                exam.ExamQuestions.Add(examQuestion);
-            }
             if (exam == null)
             {
                 throw new ArgumentException("Exam creation failed.");
             }
+
             var result = _mapper.Map<CreateExamDto>(exam);
             return result;
         }
 
-        //    public async Task<SubmissionDto> submit(SubmissionDto submitDto, string studentId, int examId)
-        //    {
-        //        var exam = await _examRepository.Submit(studentId, examId);
-        //        if (exam == null)
-        //        {
-        //            throw new ArgumentException("Exam not found or already submitted.");
-        //        }
-        //        if (submitDto.Answer == exam.)
-        //    }
-        //}
+
+        public async Task<SubmitDto> Submit(ExamSubmissionInputDto input)
+        {
+            var exam = await _examRepository.CalculateExamScoreAsync(input.ExamId);
+            if (exam == null)
+                return null;
+            
+            int score = 0;
+            foreach (var question in exam.Subject.Questions)
+            {
+                var correctOption = question.Options.FirstOrDefault(o => o.IsCorrect);
+                if (correctOption != null && input.SelectedOptionIds.Contains(correctOption.Id))
+                {
+                    score++;
+                }
+            exam.Score = score;
+                 _examRepository.Save();
+            }
+            return new SubmitDto
+            {
+                ExamId = exam.Id,
+                StudentId = exam.StudentId,
+                Score = exam.Score,
+                ExamDate = exam.StartTime,
+                SubjectName = exam.Subject.Name
+            };
+
+        }
     }
-}
+} 

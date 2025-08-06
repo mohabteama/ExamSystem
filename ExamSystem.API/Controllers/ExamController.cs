@@ -1,7 +1,9 @@
 ﻿using ExamSystem.Application.DTO;
 using ExamSystem.Application.Services.IService;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using static ExamSystem.Domain.Entities.Question;
 
 namespace ExamSystem.API.Controllers
 {
@@ -17,47 +19,52 @@ namespace ExamSystem.API.Controllers
             _examService = examService;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
-        [HttpPost()]
-        public async Task<IActionResult> CreateRondomExam([FromQuery] string studentId, [FromQuery] int subjectId)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-           
-            var result = await _examService.CreateRondomQuestions(studentId, subjectId);
-            if (result == false)
-            {
-                return BadRequest("Failed to create exam");
-            }
-            return Ok("Successfully created");
-        }
-        [HttpGet("history")]
-        public async Task<IActionResult> GetAllExamHistory(
-            [FromQuery] int pageNumber = 1,
-            [FromQuery] int pageSize = 10,
-            [FromQuery] string status = null)
-        {
-            try
-            {
-                var paginatedResult = await _examService.GetAllExamHistoryPagedAsync(pageNumber, pageSize, status);
+        //[Authorize]
+        //[HttpPost()]
+        //public async Task<IActionResult> CreateRondomExam([FromQuery] int subjectId)
+        //{
+        //    if (!ModelState.IsValid)
+        //        return BadRequest(ModelState);
+        //    var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    Console.WriteLine($"Extracted studentId = {studentId}");
+        //    var result = await _examService.CreateRondomQuestions(studentId, subjectId);
+        //    Console.WriteLine("Student exists in DB? " + result);
+        //    if (result == false)
+        //    {
+        //        return BadRequest("Failed to create exam");
+        //    }
+        //    return Ok("Successfully created");
+        //}
+        //[HttpGet("history")]
+        //public async Task<IActionResult> GetAllExamHistory(
+        //    [FromQuery] int pageNumber = 1,
+        //    [FromQuery] int pageSize = 10,
+        //    [FromQuery] string status = null)
+        //{
+        //    try
+        //    {
+        //        var paginatedResult = await _examService.GetAllExamHistoryPagedAsync(pageNumber, pageSize, status);
 
-                if (paginatedResult.Items == null || !paginatedResult.Items.Any())
-                    return NotFound("No exam history found.");
+        //        if (paginatedResult.Items == null || !paginatedResult.Items.Any())
+        //            return NotFound("No exam history found.");
 
-                return Ok(paginatedResult);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrieving exam history");
-                return StatusCode(500, "An error occurred while retrieving exam history");
-            }
-        }
-        [HttpGet("student/{studentId}/history")]
+        //        return Ok(paginatedResult);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error retrieving exam history");
+        //        return StatusCode(500, "An error occurred while retrieving exam history");
+        //    }
+        //}
+        [Authorize]
+        [HttpGet("student/history")]
         public async Task<IActionResult> GetStudentExamHistory(
-            string studentId,
+          
             [FromQuery] int pageNumber = 1,
             [FromQuery] int pageSize = 10,
             [FromQuery] string status = null)
         {
+            var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(studentId))
                 return BadRequest("Invalid student ID.");
 
@@ -91,19 +98,32 @@ namespace ExamSystem.API.Controllers
             return Ok(examDto);
         }
         [HttpPost("create")]
-        public async Task<IActionResult> CreateExam([FromQuery] string studentId, [FromQuery] int subjectId)
+        public async Task<IActionResult> CreateExam([FromQuery] int subjectId)
         {
+            var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(studentId) || subjectId <= 0)
                 return BadRequest("Invalid student ID or subject ID.");
+
+
+            var examDto = await _examService.CreateExam(studentId, subjectId);
+            return Ok(examDto);
+        }
+        [Authorize]
+        [HttpPost("submit")]
+        public async Task<IActionResult> SubmitExam([FromBody] ExamSubmissionInputDto input)
+        {
+            var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (input == null || string.IsNullOrEmpty(studentId) || input.ExamId <= 0)
+                return BadRequest("Invalid submission data.");
             try
             {
-                var examDto = await _examService.CreateExam(studentId, subjectId);
-                return Ok(examDto);
+                var result = await _examService.Submit(input);
+                return Ok(result);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error creating exam");
-                return StatusCode(500, "An error occurred while creating the exam");
+                _logger.LogError(ex, "Error submitting exam");
+                return StatusCode(500, "An error occurred while submitting the exam");
             }
         }
     }

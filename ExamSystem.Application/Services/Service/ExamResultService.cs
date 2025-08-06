@@ -21,10 +21,10 @@ namespace ExamSystem.Application.Services.Service
 
         public async Task<ExamResultDto> GetExamResultAsync(string studentId, int examId)
         {
-            var examResult =  _examResultRepository.GetExamResultAsync(studentId, examId);
+            var examResult = await _examResultRepository.GetExamResultAsync(studentId, examId);
             if (examResult == null)
                 return null;    
-            var Result = _mapper.Map<ExamResultDto>(examResult);
+            var Result =  _mapper.Map<ExamResultDto>(examResult);
             return Result;
         }
     }

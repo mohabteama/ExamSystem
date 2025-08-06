@@ -6,6 +6,5 @@ namespace ExamSystem.Application.DTO
         public int Id { get; set; }
         public int QuestionId { get; set; }
         public string option { get; set; }
-        public bool IsCorrect { get; set; }
     }
 }

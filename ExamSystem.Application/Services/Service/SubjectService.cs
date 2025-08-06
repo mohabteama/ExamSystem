@@ -50,13 +50,13 @@ namespace ExamSystem.Application.Services.Service
                 Questions = subject.Questions?.Select(q => new QuestionDto
                 {
                     Id = q.Id,
-                    Text = q.question,
+                    question = q.question,
                     Options = q.Options?.Select(o => new OptionDto
                     {
                         Id = o.Id,
                         QuestionId = o.QuestionId,
                         option = o.option,
-                        IsCorrect = o.IsCorrect
+                        
                     }).ToList() ?? new List<OptionDto>()
                 }).ToList() ?? new List<QuestionDto>(),
             };

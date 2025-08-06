@@ -1,4 +1,5 @@
 ﻿using ExamSystem.Domain.Entities;
+using static ExamSystem.Domain.Entities.Question;
 
 
 namespace ExamSystem.Domain.Interfaces
@@ -12,8 +13,9 @@ namespace ExamSystem.Domain.Interfaces
         Task<(List<Exam> Exams, int TotalCount)> GetAllExamsPagedAsync(int pageNumber, int pageSize, string status = null);
         Task<(List<Exam> Exams, int TotalCount)>
             GetStudentExamHistoryPagedAsync(string studentId, int pageNumber, int pageSize, string status = null);
-        Task<Exam> Submit(string studentId , int examId);
         public Task<Exam> AddExam(Exam entity);
+
+        public Task<Exam> CalculateExamScoreAsync(int examId);
 
     }
 }

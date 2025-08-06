@@ -11,14 +11,18 @@ using System.Text;
 
 namespace ExamSystem.API.Controllers
 {
+    
     [Route("api/[Controller]")]
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
         private readonly UserManager<Student> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly JwtConfig _jwtConfig;
-        public AuthenticationController(UserManager<Student> userManager, IOptions<JwtConfig> jwtConfig)
+        
+        public AuthenticationController(UserManager<Student> userManager, IOptions<JwtConfig> jwtConfig, RoleManager<IdentityRole> roleManager)
         {
+            _roleManager = roleManager;
             _userManager = userManager;
             _jwtConfig = jwtConfig.Value;
         }
@@ -26,10 +30,15 @@ namespace ExamSystem.API.Controllers
         [Route("Register")]
         public async Task<IActionResult> Register([FromBody] UserRegistrationRequestDto requestDot)
         {
+
+           
+
             if (ModelState.IsValid)
             {
                 var UserManager = await _userManager.FindByEmailAsync(requestDot.Email);
-                if (UserManager != null)
+
+                
+                    if (UserManager != null)
                 {
                     return BadRequest("User already exists with this email.");
                 }
@@ -40,9 +49,17 @@ namespace ExamSystem.API.Controllers
                 };
 
                 var IsCreated = await _userManager.CreateAsync(NewUser, requestDot.PassWord);
+                
                 if (IsCreated.Succeeded)
                 {
-                    var token = GenerateJwtToken(NewUser);
+                    if (!await _roleManager.RoleExistsAsync("Student"))
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole("Student"));
+                    }
+
+                    await _userManager.AddToRoleAsync(NewUser, "Student");
+                    var savedUser = await _userManager.FindByEmailAsync(NewUser.Email);
+                    var token =await GenerateJwtToken(savedUser);
                     return Ok(new AuthResult()
                     {
                         Result = true, 
@@ -52,6 +69,8 @@ namespace ExamSystem.API.Controllers
             }
 
             return BadRequest("User creation failed. Please check your details and try again.");
+
+
         }
 
         [Route("Login")]
@@ -88,8 +107,8 @@ namespace ExamSystem.API.Controllers
                     Result = false
                 });
             }
-
-            var jwtToken = GenerateJwtToken(existingUser);
+            var savedUser = await _userManager.FindByEmailAsync(existingUser.Email);
+            var jwtToken = await GenerateJwtToken(savedUser);
 
             return Ok(new AuthResult
             {
@@ -97,28 +116,39 @@ namespace ExamSystem.API.Controllers
                 Result = true
             });
         }
-        private string GenerateJwtToken(IdentityUser user)
+        private async Task<string> GenerateJwtToken(Student user)
         {
-            var JwtTokenHandler = new JwtSecurityTokenHandler();
-            var Key = Encoding.UTF8.GetBytes(_jwtConfig.Secret);
-            var TokenDescriptor = new SecurityTokenDescriptor
+            var jwtTokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_jwtConfig.Secret);
+
+            // Get user roles
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            // Create claims
+            var claims = new List<Claim>
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim("Id",user.Id),
-                    new Claim(JwtRegisteredClaimNames.Sub,user.Email),
-                    new Claim(JwtRegisteredClaimNames.Email,value:user.Email),
-                    new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
-                    new Claim(JwtRegisteredClaimNames.Iat,DateTime.Now.ToUniversalTime().ToString()),
-                }),
-                Expires = DateTime.Now.AddHours(1),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Key), SecurityAlgorithms.HmacSha256)
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Iat, DateTime.Now.ToUniversalTime().ToString())
             };
 
-            var Token = JwtTokenHandler.CreateToken(TokenDescriptor);
-            var jwtToken = JwtTokenHandler.WriteToken(Token);
-            return jwtToken;
+            // Add roles to claims
+            foreach (var role in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.Now.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
+            };
+
+            var token = jwtTokenHandler.CreateToken(tokenDescriptor);
+            var jwtToken = jwtTokenHandler.WriteToken(token);
+            return jwtToken;
         }
 
 

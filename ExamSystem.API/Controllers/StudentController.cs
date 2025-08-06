@@ -1,6 +1,8 @@
 ﻿using ExamSystem.Application.DTO;
 using ExamSystem.Application.Services.IService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ExamSystem.API.Controllers
 {
@@ -32,9 +34,11 @@ namespace ExamSystem.API.Controllers
 
         //    return StatusCode(201, "Successfully created");
         //}
-        [HttpPut("{studentId}/status/{isActive}")]
-        public IActionResult UpdateStudentStatus(string studentId, bool isActive)
+        [Authorize]
+        [HttpPut("{isActive}")]
+        public IActionResult UpdateStudentStatus(bool isActive)
         {
+            var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var result = _studentService.UpdateStudentStatus(studentId, isActive);
             if (!result) return NotFound("Student not found or error occurred");
             return Ok("Successfully updated student status");

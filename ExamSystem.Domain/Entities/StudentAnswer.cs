@@ -7,7 +7,6 @@ namespace ExamSystem.Domain.Entities
         public int ExamId { get; set; }
         public string StudentId { get; set; }
         public int QuestionId { get; set; }
-        public string Answer { get; set; }
         public int SelectedOptionId { get; set; }
 
         public Exam Exam { get; set; }

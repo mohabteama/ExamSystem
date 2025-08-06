@@ -1,4 +1,6 @@
 ﻿
+using ExamSystem.Domain.Entities;
+
 namespace ExamSystem.Application.DTO
 {
     public class CreateExamDto
@@ -6,6 +8,9 @@ namespace ExamSystem.Application.DTO
         public int Id { get; set; }
         public string StudentId { get; set; }
         public int SubjectId { get; set; }
+        public string SubjectName { get; set; }
+
         public DateTime StartTime { get; set; } = DateTime.UtcNow;
+        public List<QuestionDto> Questions { get; set; } = new();
     }
 }

@@ -21,6 +21,10 @@ namespace ExamSystem.Application.Mapper
             CreateMap<Subject, CreateSubjectDto>().ReverseMap();
             CreateMap<Exam, ExamResultDto>().ReverseMap();
             CreateMap<Exam, CreateExamDto>().ReverseMap();
+            CreateMap<Exam, ExamHistoryDto>().ReverseMap();
+            
+            CreateMap<Question, QuestionDto>().ReverseMap();
+            CreateMap<Option, OptionDto>().ReverseMap();
 
         }
     }

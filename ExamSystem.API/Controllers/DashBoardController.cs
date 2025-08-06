@@ -1,8 +1,10 @@
 ﻿using ExamSystem.Application.Services.IService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExamSystem.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class DashBoardController : ControllerBase
@@ -12,6 +14,7 @@ namespace ExamSystem.API.Controllers
         {
             _dashBoardService = dashBoardService;
         }
+
         [HttpGet]
         public IActionResult GetDashBoard()
         {

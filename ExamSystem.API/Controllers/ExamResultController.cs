@@ -1,5 +1,7 @@
 ﻿using ExamSystem.Application.Services.IService;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ExamSystem.API.Controllers
 {
@@ -12,9 +14,11 @@ namespace ExamSystem.API.Controllers
         {
             _examResultService = examResultService;
         }
-        [HttpGet("{studentId}/{examId}")]
-        public async Task<IActionResult> GetExamResult(string studentId, int examId)
+        [Authorize]
+        [HttpGet("{examId}")]
+        public async Task<IActionResult> GetExamResult(int examId)
         {
+            var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var result = await _examResultService.GetExamResultAsync(studentId, examId);
             if (result == null)
             {
