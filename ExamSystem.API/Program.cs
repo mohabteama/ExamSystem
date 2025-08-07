@@ -1,4 +1,5 @@
 using ExamSystem.API.Configurations;
+using ExamSystem.API.Hubs;
 using ExamSystem.Application.Mapper;
 using ExamSystem.Application.Services.IService;
 using ExamSystem.Application.Services.Service;
@@ -9,6 +10,7 @@ using ExamSystem.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Security.Claims;
@@ -35,7 +37,7 @@ builder.Services.AddScoped<IDashBoardService, DashBoardService>();
 builder.Services.AddScoped<IExamResultService, ExamResultService>();
 builder.Services.AddScoped<IStudentAnswerRepository, StudentAnswerRepository>();
 builder.Services.AddScoped<IExamQuestionRepository, ExamQuestionRepository>();
-
+builder.Services.AddSignalR();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -148,7 +150,8 @@ if (app.Environment.IsDevelopment())
     });
 
 
-    app.UseHttpsRedirection();
+    //app.UseHttpsRedirection();
+    app.UseCors("FrontEnd");
 
     app.UseAuthentication();
 
@@ -156,9 +159,11 @@ if (app.Environment.IsDevelopment())
 
     app.UseAuthorization();
 
-    app.UseCors("FrontEnd");
 
     app.MapControllers();
+
+
+    app.MapHub<NotificationHub>("/hub/notifications");
 
     app.Run();
 }

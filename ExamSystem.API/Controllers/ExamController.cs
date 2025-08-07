@@ -1,7 +1,9 @@
-﻿using ExamSystem.Application.DTO;
+﻿using ExamSystem.API.Hubs;
+using ExamSystem.Application.DTO;
 using ExamSystem.Application.Services.IService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 using static ExamSystem.Domain.Entities.Question;
 
@@ -13,10 +15,12 @@ namespace ExamSystem.API.Controllers
     {
         private readonly IExamService _examService;
         private readonly ILogger<ExamController> _logger;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
-        public ExamController(IExamService examService, ILogger<ExamController> logger)
+        public ExamController(IExamService examService, ILogger<ExamController> logger, IHubContext<NotificationHub> hubContext)
         {
             _examService = examService;
+            _hubContext = hubContext; 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
         //[Authorize]
@@ -118,6 +122,15 @@ namespace ExamSystem.API.Controllers
             try
             {
                 var result = await _examService.Submit(input);
+                Console.WriteLine("📡 Sending score via SignalR...");
+                await _hubContext.Clients.All.SendAsync("ReceiveScore", new
+                {
+                    StudentId = result.StudentId,
+                    Score = result.Score,
+                    SubjectName = result.SubjectName,
+                    ExamDate = result.ExamDate
+                });
+
                 return Ok(result);
             }
             catch (Exception ex)
