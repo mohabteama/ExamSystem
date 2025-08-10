@@ -23,6 +23,7 @@ namespace ExamSystem.Application.Services.Service
         {
 
             var options = _mapper.Map<Option>(optionDto);
+            options.QuestionId = questionId;
             return _optionRepository.Create(options);
         }
     }

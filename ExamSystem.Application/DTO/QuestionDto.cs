@@ -15,5 +15,6 @@ namespace ExamSystem.Application.DTO
     {
         public string question { get; set; }
 
+
     }
 }

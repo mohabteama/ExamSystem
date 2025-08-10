@@ -16,16 +16,19 @@ namespace ExamSystem.Application.Services.Service
             _questionRepository = questionRepository;
             _mapper = mapper;
         }
-        
-        public bool CreateQuestion(CreateQuestionDto CreateQuestionDto, int SubjectId)
+
+        public Question CreateQuestion(CreateQuestionDto createQuestionDto, int subjectId)
         {
             var exist = _questionRepository.GetAll()
-                .Any(q => q.question.Trim().ToLower() ==
-                CreateQuestionDto.question.Trim().ToLower());
+                .Any(q => q.question.Trim().ToLower() == createQuestionDto.question.Trim().ToLower());
+
             if (exist)
-                return false;
-            var question = _mapper.Map<Question>(CreateQuestionDto);
-            return _questionRepository.CreateQuestion(question, SubjectId);
-        }   
+                return null; // علشان تعرف في الـ Controller إنه موجود بالفعل
+
+            var question = _mapper.Map<Question>(createQuestionDto);
+            return _questionRepository.CreateQuestion(question, subjectId);
+        }
+
+
     }
 }

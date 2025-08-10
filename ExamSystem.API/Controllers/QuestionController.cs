@@ -14,19 +14,27 @@ namespace ExamSystem.API.Controllers
             _questionService = questionService;
         }
         [HttpPost]
-        public IActionResult CreateQuestion( [FromBody] CreateQuestionDto CreateQuestionDto, [FromQuery] int SubjectID)
+        public IActionResult CreateQuestion([FromBody] CreateQuestionDto createQuestionDto, [FromQuery] int subjectId)
         {
-            if (!ModelState.IsValid || CreateQuestionDto == null)
+            if (!ModelState.IsValid || createQuestionDto == null)
                 return BadRequest(ModelState);
 
-            // Additional validation for the Text property
-            if (string.IsNullOrEmpty(CreateQuestionDto.question))
+            if (string.IsNullOrEmpty(createQuestionDto.question))
                 return BadRequest("Question text cannot be empty");
 
-            if (!_questionService.CreateQuestion(CreateQuestionDto, SubjectID))
+            var createdQuestion = _questionService.CreateQuestion(createQuestionDto, subjectId);
+
+            if (createdQuestion == null)
                 return StatusCode(422, "Question already exists or error in creation");
 
-            return Ok("Successfully created");
+            return Ok(new
+            {
+                Message = "Successfully created",
+                QuestionId = createdQuestion.Id,
+                QuestionText = createdQuestion.question
+            });
         }
+
+
     }
 }

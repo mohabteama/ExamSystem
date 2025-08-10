@@ -9,24 +9,21 @@ namespace ExamSystem.Infrastructure.Repositories
     {
         public QuestionRepository(ApplicationDbContext context) : base(context) { }
 
-        public bool CreateQuestion(Question question, int SubjectId)
+        public Question CreateQuestion(Question question, int SubjectId)
         {
             var subject = _context.Subjects
                 .Local
-                .FirstOrDefault(s => s.Id == SubjectId);
-            if (subject == null)
-            {
-                subject = _context.Subjects.Find(SubjectId);
+                .FirstOrDefault(s => s.Id == SubjectId) ?? _context.Subjects.Find(SubjectId);
 
-                if (subject == null)
-                {
-                    throw new FileNotFoundException($"Subject with ID {SubjectId} not found.");
-                }
-            }
+            if (subject == null)
+                throw new FileNotFoundException($"Subject with ID {SubjectId} not found.");
 
             question.Subject = subject;
             _context.Questions.Add(question);
-            return _context.SaveChanges() > 0;
+            _context.SaveChanges();
+
+            return question; // بيرجع السؤال بالـ Id بعد الحفظ
         }
-    }  
+
+    }
 }

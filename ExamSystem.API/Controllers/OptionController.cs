@@ -18,8 +18,13 @@ namespace ExamSystem.API.Controllers
         {
             if (!ModelState.IsValid || optionDto == null)
                 return BadRequest(ModelState);
-            _optionService.CreateOptions(optionDto, questionId);
-            return Ok("Successfully created");
+
+            var success = _optionService.CreateOptions(optionDto, questionId);
+
+            if (!success)
+                return StatusCode(500, "Error creating option");
+
+            return Ok(new { message = "Option created successfully" });
         }
     }
 }
