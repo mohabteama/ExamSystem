@@ -2,8 +2,6 @@
 using ExamSystem.Domain.Interfaces;
 using ExamSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using static ExamSystem.Domain.Entities.Question;
 
 
 namespace ExamSystem.Infrastructure.Repositories
@@ -26,21 +24,6 @@ namespace ExamSystem.Infrastructure.Repositories
                     .ThenInclude(q => q.Questions)
                         .ThenInclude(o => o.Options)
                 .FirstOrDefaultAsync(e => e.Id == id);
-        }
-
-
-        public List<Exam> GetExamsByStudentId(string studentId)
-        {
-            return _context.Exams
-                .Where(e => e.StudentId == studentId)
-                .ToList();
-        }
-
-        public List<Exam> GetStudentExamsByStudentId(string studentId)
-        {
-            return _context.Exams
-                .Where(er => er.StudentId == studentId)
-                .ToList();
         }
 
         public async Task<(List<Exam> Exams, int TotalCount)> GetAllExamsPagedAsync(int pageNumber, int pageSize, string status = null)
@@ -114,11 +97,6 @@ namespace ExamSystem.Infrastructure.Repositories
 
             return randomQuestions;
         }
-
-
-
-
-
 
         public async Task<Exam> CalculateExamScoreAsync(int examId)
         {

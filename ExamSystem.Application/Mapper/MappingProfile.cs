@@ -9,20 +9,17 @@ namespace ExamSystem.Application.Mapper
         public MappingProfile()
         {
             CreateMap<Exam, ExamDto>().ReverseMap();
-            CreateMap<ExamQuestion, ExamQuestionDto>().ReverseMap();
             CreateMap<ExamResult, ExamResultDto>().ReverseMap();
             CreateMap<Option, OptionDto>().ReverseMap();
             CreateMap<Question, QuestionDto>().ReverseMap();
             CreateMap<Question, CreateQuestionDto>().ReverseMap();
             CreateMap<Student, StudentDto>();
-            CreateMap<StudentAnswer, StudentAnswerDto>().ReverseMap();
             CreateMap<StudentSubject, StudentSubjectDto>().ReverseMap();
             CreateMap<Subject, SubjectDto>().ReverseMap();
             CreateMap<Subject, CreateSubjectDto>().ReverseMap();
             CreateMap<Exam, ExamResultDto>().ReverseMap();
             CreateMap<Exam, CreateExamDto>().ReverseMap();
             CreateMap<Exam, ExamHistoryDto>().ReverseMap();
-            
             CreateMap<Question, QuestionDto>().ReverseMap();
             CreateMap<Option, OptionDto>().ReverseMap();
 

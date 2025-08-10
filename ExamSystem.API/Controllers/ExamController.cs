@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
-using static ExamSystem.Domain.Entities.Question;
 
 namespace ExamSystem.API.Controllers
 {
@@ -23,43 +22,7 @@ namespace ExamSystem.API.Controllers
             _hubContext = hubContext; 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
-        //[Authorize]
-        //[HttpPost()]
-        //public async Task<IActionResult> CreateRondomExam([FromQuery] int subjectId)
-        //{
-        //    if (!ModelState.IsValid)
-        //        return BadRequest(ModelState);
-        //    var studentId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        //    Console.WriteLine($"Extracted studentId = {studentId}");
-        //    var result = await _examService.CreateRondomQuestions(studentId, subjectId);
-        //    Console.WriteLine("Student exists in DB? " + result);
-        //    if (result == false)
-        //    {
-        //        return BadRequest("Failed to create exam");
-        //    }
-        //    return Ok("Successfully created");
-        //}
-        //[HttpGet("history")]
-        //public async Task<IActionResult> GetAllExamHistory(
-        //    [FromQuery] int pageNumber = 1,
-        //    [FromQuery] int pageSize = 10,
-        //    [FromQuery] string status = null)
-        //{
-        //    try
-        //    {
-        //        var paginatedResult = await _examService.GetAllExamHistoryPagedAsync(pageNumber, pageSize, status);
 
-        //        if (paginatedResult.Items == null || !paginatedResult.Items.Any())
-        //            return NotFound("No exam history found.");
-
-        //        return Ok(paginatedResult);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Error retrieving exam history");
-        //        return StatusCode(500, "An error occurred while retrieving exam history");
-        //    }
-        //}
         [Authorize]
         [HttpGet("student/history")]
         public async Task<IActionResult> GetStudentExamHistory(
@@ -122,7 +85,6 @@ namespace ExamSystem.API.Controllers
             try
             {
                 var result = await _examService.Submit(input);
-                Console.WriteLine("📡 Sending score via SignalR...");
                 await _hubContext.Clients.All.SendAsync("ReceiveScore", new
                 {
                     StudentId = result.StudentId,

@@ -2,7 +2,6 @@
 {
     public class Exam
     {
-        
         public int Id { get; set; }
         public string StudentId { get; set; }
         public int SubjectId { get; set; }
@@ -16,7 +15,5 @@
         public ICollection<ExamQuestion> ExamQuestions { get; set; }
         public ICollection<StudentAnswer> StudentAnswers { get; set; }
         public ICollection<Question> Questions { get; set; }
-        
-
     }
 }

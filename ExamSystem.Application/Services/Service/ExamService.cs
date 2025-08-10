@@ -3,9 +3,6 @@ using ExamSystem.Application.DTO;
 using ExamSystem.Application.Services.IService;
 using ExamSystem.Domain.Entities;
 using ExamSystem.Domain.Interfaces;
-using System;
-using static ExamSystem.Domain.Entities.Question;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace ExamSystem.Application.Services.Service
@@ -14,33 +11,15 @@ namespace ExamSystem.Application.Services.Service
     {
         private readonly IExamRepository _examRepository;
         private readonly IStudentRepository _studentRepository;
-        private readonly IQuestionRepository _questionRepository;
-        private readonly IOptionRepository _optionRepository;
-        private readonly IStudentAnswerRepository _studentAnswerRepository;
-        private readonly IExamResultRepository _examResultRepository;
-        private readonly IExamQuestionRepository _examQuestionRepository;
-        private readonly ISubjectRepository _subjectRepository;
         private readonly IMapper _mapper;
 
         public ExamService(
             IExamRepository examRepository,
-            ISubjectRepository subjectRepository,
             IStudentRepository studentRepository,
-            IQuestionRepository questionRepository,
-            IOptionRepository optionRepository,
-            IStudentAnswerRepository studentAnswerRepository,
-            IExamResultRepository examResultRepository,
-            IExamQuestionRepository examQuestionRepository,
             IMapper _mapper)
         {
-            _subjectRepository = subjectRepository;
             _examRepository = examRepository;
             _studentRepository = studentRepository;
-            _questionRepository = questionRepository;
-            _optionRepository = optionRepository;
-            _studentAnswerRepository = studentAnswerRepository;
-            _examResultRepository = examResultRepository;
-            _examQuestionRepository = examQuestionRepository;
             this._mapper = _mapper;
         }
         public async Task<PaginatedResultDto<ExamResultDto>> GetAllExamHistoryPagedAsync(int pageNumber, int pageSize, string status = null)
@@ -62,24 +41,6 @@ namespace ExamSystem.Application.Services.Service
             };
         }
 
-
-            public async Task<bool> CreateRondomQuestions(string studentId, int subjectId)
-            {
-
-
-
-                var questions = await _examRepository.CreateRondomExamQuestions(subjectId, 10);
-                Exam exam = new Exam
-                {
-                    StudentId = studentId,
-                    SubjectId = subjectId,
-                    StartTime = DateTime.UtcNow,
-                    Status = "InProgress",
-                    Questions = questions
-                };
-                var result = await _examRepository.AddAsync(exam);
-                return result;
-            }
         public async Task<PaginatedResultDto<ExamHistoryDto>> GetStudentExamHistoryPagedAsync(
             string studentId, int pageNumber, int pageSize, string status = null)
         {

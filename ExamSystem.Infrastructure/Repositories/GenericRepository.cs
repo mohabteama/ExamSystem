@@ -13,34 +13,13 @@ namespace ExamSystem.Infrastructure.Repositories
             _context = context;
             _dbSet = _context.Set<T>();
         }
-        public async Task<(ICollection<T> Items, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize)
-        {
-            pageNumber = pageNumber < 1 ? 1 : pageNumber;
-            pageSize = pageSize < 1 ? 10 : pageSize;
 
-            var totalCount = await _dbSet.CountAsync();
-
-            var items = await _dbSet
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-
-            return (items, totalCount);
-        }
-        public async Task<bool> AddAsync(T entity)
-        {
-            await _context.Set<T>().AddAsync(entity);
-            return Save();
-        }
         
         public ICollection<T> GetAll()
         {
             return _dbSet.ToList();
         }
-        public IQueryable<T> Get()
-        {
-            return _dbSet;
-        }
+
 
         public T GetByStringId(string id)
         {
@@ -51,15 +30,6 @@ namespace ExamSystem.Infrastructure.Repositories
             return _dbSet.Find(id);
         }
 
-        public T GetByName(string name)
-        {
-            return _dbSet.FirstOrDefault(e => EF.Property<string>(e, "Name") == name);
-        }
-
-        public bool Exists(int id)
-        {
-            return _dbSet.Find(id) != null;
-        }
 
         public bool Create(T entity)
         {
@@ -72,12 +42,6 @@ namespace ExamSystem.Infrastructure.Repositories
             _dbSet.Update(entity);
             return Save();
 
-        }
-
-        public bool Delete(T entity)
-        {
-            _dbSet.Remove(entity);
-            return Save();
         }
 
         public bool Save()

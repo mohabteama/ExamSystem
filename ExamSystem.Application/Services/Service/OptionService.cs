@@ -11,14 +11,17 @@ namespace ExamSystem.Application.Services.Service
     {
         private readonly IOptionRepository _optionRepository;
         private readonly IMapper _mapper;
-        public OptionService(IMapper mapper, IOptionRepository optionRepository)
+        public OptionService(IMapper mapper,
+            IOptionRepository optionRepository
+            )
         {
             _optionRepository = optionRepository;
             _mapper = mapper;
         }
 
-        public bool CreateOptions(OptionDto optionDto, int questionId) {
-            
+        public bool CreateOptions(OptionDto optionDto, int questionId)
+        {
+
             var options = _mapper.Map<Option>(optionDto);
             return _optionRepository.Create(options);
         }

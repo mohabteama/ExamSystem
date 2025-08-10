@@ -22,15 +22,6 @@ namespace ExamSystem.Application.Services.Service
                  throw new ArgumentException("No students found.");
             return students;
         }
-        //public bool CreateStudent(StudentDto StudentDto)
-        //{
-        //    var exist = _StudentRepository.GetAll()
-        //        .Any(s => s.Email.Trim().ToLower() == StudentDto.Email.Trim().ToLower());
-        //    if (exist)
-        //        return false;
-        //    var student = _mapper.Map<Student>(StudentDto);
-        //    return _StudentRepository.Create(student);
-        //}
 
         public bool UpdateStudentStatus(string StudentId,bool isActive)
         {

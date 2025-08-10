@@ -10,7 +10,6 @@ using ExamSystem.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Security.Claims;
@@ -35,8 +34,6 @@ builder.Services.AddScoped<IOptionService, OptionService>();
 builder.Services.AddScoped<IExamService, ExamService>();
 builder.Services.AddScoped<IDashBoardService, DashBoardService>();
 builder.Services.AddScoped<IExamResultService, ExamResultService>();
-builder.Services.AddScoped<IStudentAnswerRepository, StudentAnswerRepository>();
-builder.Services.AddScoped<IExamQuestionRepository, ExamQuestionRepository>();
 builder.Services.AddSignalR();
 
 builder.Services.AddControllers();

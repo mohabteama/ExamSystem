@@ -10,12 +10,5 @@ namespace ExamSystem.Infrastructure.Repositories
         public OptionRepository(ApplicationDbContext context) : base(context)
         {
         }
-
-       
-
-        public async Task<List<Option>> GetOptions(int QuestionId)
-        {
-            return await _context.Options.Where(o => o.QuestionId == QuestionId).ToListAsync();
-        }
     }
 }

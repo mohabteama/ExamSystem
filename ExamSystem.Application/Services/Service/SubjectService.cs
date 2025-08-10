@@ -10,7 +10,6 @@ namespace ExamSystem.Application.Services.Service
     public class SubjectService : ISubjectService
     {
         private readonly ISubjectRepository _subjectRepository;
-        private readonly IOptionRepository _optionRepository;
         private readonly IMapper _mapper;
 
         public SubjectService(IMapper mapper, ISubjectRepository subjectRepository)
