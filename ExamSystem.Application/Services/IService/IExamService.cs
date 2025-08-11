@@ -1,5 +1,4 @@
 ﻿using ExamSystem.Application.DTO;
-using static ExamSystem.Domain.Entities.Question;
 
 
 namespace ExamSystem.Application.Services.IService

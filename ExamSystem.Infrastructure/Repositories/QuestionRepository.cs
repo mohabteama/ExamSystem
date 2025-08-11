@@ -22,7 +22,7 @@ namespace ExamSystem.Infrastructure.Repositories
             _context.Questions.Add(question);
             _context.SaveChanges();
 
-            return question; // بيرجع السؤال بالـ Id بعد الحفظ
+            return question; 
         }
 
     }

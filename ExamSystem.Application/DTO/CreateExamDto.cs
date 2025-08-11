@@ -1,6 +1,4 @@
 ﻿
-using ExamSystem.Domain.Entities;
-
 namespace ExamSystem.Application.DTO
 {
     public class CreateExamDto

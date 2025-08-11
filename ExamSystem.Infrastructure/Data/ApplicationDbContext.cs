@@ -17,7 +17,7 @@ namespace ExamSystem.Infrastructure.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                // Hard-coded connection string for design-time
+                
                 optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=ExamSystem;Trusted_Connection=True;MultipleActiveResultSets=true");
             }
         }
@@ -39,7 +39,7 @@ namespace ExamSystem.Infrastructure.Data
 
             modelBuilder.Entity<Student>(entity =>
             {
-                //entity.HasKey(e => e.Id);
+               
 
                 entity.HasMany(s => s.Exams)
                       .WithOne(e => e.Student)
@@ -51,9 +51,7 @@ namespace ExamSystem.Infrastructure.Data
                       .HasForeignKey(ss => ss.StudentId)
                       .OnDelete(DeleteBehavior.Restrict);
 
-                //entity.HasMany(s => s.Subjects)
-                //      .WithMany()
-                //      .UsingEntity(j => j.ToTable("StudentSubjects"));
+                
             });
 
             modelBuilder.Entity<Subject>(entity =>
@@ -71,9 +69,7 @@ namespace ExamSystem.Infrastructure.Data
                       .HasForeignKey(e => e.SubjectId)
                       .OnDelete(DeleteBehavior.Restrict);
 
-                //entity.HasMany(s => s.Students)
-                //      .WithMany()
-                //      .UsingEntity(j => j.ToTable("StudentSubjects"));
+                
 
             });
 

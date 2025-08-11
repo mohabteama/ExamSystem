@@ -121,10 +121,8 @@ namespace ExamSystem.API.Controllers
             var jwtTokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_jwtConfig.Secret);
 
-            // Get user roles
             var userRoles = await _userManager.GetRolesAsync(user);
 
-            // Create claims
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
@@ -133,7 +131,6 @@ namespace ExamSystem.API.Controllers
                 new Claim(JwtRegisteredClaimNames.Iat, DateTime.Now.ToUniversalTime().ToString())
             };
 
-            // Add roles to claims
             foreach (var role in userRoles)
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));

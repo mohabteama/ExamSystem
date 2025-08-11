@@ -24,16 +24,6 @@ namespace ExamSystem.API.Controllers
                 return NotFound("No students found.");
             return Ok(students);
         }
-        //[HttpPost]
-        //public IActionResult CreateStudent([FromBody] StudentDto StudentDto)
-        //{
-        //    if (StudentDto == null) return BadRequest();
-
-        //    var result = _studentService.CreateStudent(StudentDto);
-        //    if (!result) return StatusCode(422, "Subject already exists or error occurred");
-
-        //    return StatusCode(201, "Successfully created");
-        //}
         [Authorize]
         [HttpPut("{isActive}")]
         public IActionResult UpdateStudentStatus(bool isActive)
