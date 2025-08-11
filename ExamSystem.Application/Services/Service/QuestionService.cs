@@ -23,10 +23,12 @@ namespace ExamSystem.Application.Services.Service
                 .Any(q => q.question.Trim().ToLower() == createQuestionDto.question.Trim().ToLower());
 
             if (exist)
-                return null; // علشان تعرف في الـ Controller إنه موجود بالفعل
+                return null;
 
             var question = _mapper.Map<Question>(createQuestionDto);
-            return _questionRepository.CreateQuestion(question, subjectId);
+            var createdQuestion = _questionRepository.CreateQuestion(question, subjectId);
+            _questionRepository.Save();
+            return createdQuestion;
         }
 
 
