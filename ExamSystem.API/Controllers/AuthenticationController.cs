@@ -75,7 +75,7 @@ namespace ExamSystem.API.Controllers
 
         [Route("Login")]
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] UserRegistrationRequestDto loginRequestDto)
+        public async Task<IActionResult> Login([FromBody] UserLoginRequestDto loginRequestDto)
         {
             if (!ModelState.IsValid)
             {

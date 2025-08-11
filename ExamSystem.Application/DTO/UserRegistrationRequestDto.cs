@@ -8,4 +8,9 @@ namespace ExamSystem.Application.DTO
         public string Email { get; set; }
         public string PassWord { get; set; }
     }
+    public class UserLoginRequestDto
+    {
+        public string Email { get; set; }
+        public string PassWord { get; set; }
+    }
 }
